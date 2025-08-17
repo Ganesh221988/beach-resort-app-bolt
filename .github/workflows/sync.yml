@@ -3,22 +3,18 @@ name: Sync to Main Repo
 on:
   push:
     branches:
-      - main   # Bolt pushes here by default
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Bolt repo
+      - name: Checkout source repo
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
-      - name: Push to Real Repo
+      - name: Push changes to main repo
         run: |
-          git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           git remote add target https://Ganesh221988:${{ secrets.MAIN_REPO_TOKEN }}@github.com/Ganesh221988/beach-resort-app.git
           git push target main --force
-          
-
