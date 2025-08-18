@@ -148,7 +148,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <a href="#destinations" className="text-gray-700 hover:text-orange-600 font-medium">Destinations</a>
                 <a href="#properties" className="text-gray-700 hover:text-orange-600 font-medium">Properties</a>
                 <a href="#about" className="text-gray-700 hover:text-orange-600 font-medium">About</a>
-                <a href="#contact" className="text-gray-700 hover:text-orange-600 font-medium">Contact</a>
+               <a
+    href="#contact"
+    className="text-gray-700 hover:text-orange-600 font-medium"
+  >
+    Contact
+  </a>
+</button>
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   <button
                     onClick={onLogin}
