@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Search, MapPin, Calendar, Users, Star, ChevronRight, Menu, X, User, Heart, Shield, Award, Globe } from 'lucide-react';
+import { Search, MapPin, Calendar, Users, Star, ChevronRight, ChevronDown, Menu, X, User, Heart, Shield, Award, Globe } from 'lucide-react';
+import { mockEvents } from '../../data/mockData';
 
 interface LandingPageProps {
   onLogin: () => void;
