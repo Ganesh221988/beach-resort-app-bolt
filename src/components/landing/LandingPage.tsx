@@ -112,7 +112,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <div className="relative events-dropdown">
+              <div className="relative">
                 <button
                   onClick={() => setIsEventsOpen(!isEventsOpen)}
                   className="flex items-center space-x-1 text-gray-700 hover:text-orange-600 font-medium"
@@ -121,31 +121,19 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   <ChevronDown className={`h-4 w-4 transition-transform ${isEventsOpen ? 'rotate-180' : ''}`} />
                 </button>
                 
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setIsEventsOpen(!isEventsOpen)}
-                    className="flex items-center justify-between w-full text-gray-700 hover:text-orange-600 font-medium"
-                  >
-                    <span>Events</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${isEventsOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {isEventsOpen && (
-                    <div className="pl-4 space-y-2">
-                      {mockEvents.map((event, index) => (
-                        <a
-                          key={index}
-                          href={`#event-${event.id}`}
-                          className="block text-sm text-gray-600 hover:text-orange-600"
-                          onClick={() => {
-                            setIsEventsOpen(false);
-                            setIsMenuOpen(false);
-                          }}
-                        >
-                          {event.name}
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                {isEventsOpen && (
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    {mockEvents.map((event, index) => (
+                      <a
+                        key={index}
+                        href={`#event-${event.id}`}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-orange-600"
+                        onClick={() => setIsEventsOpen(false)}
+                      >
+                        {event.name}
+                      </a>
+                    ))}
+                  </div>
                 )}
               </div>
               <a href="#properties" className="text-gray-700 hover:text-orange-600 font-medium">Properties</a>
@@ -180,16 +168,42 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-200 mobile-menu">
+            <div className="md:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col space-y-4">
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setIsEventsOpen(!isEventsOpen)}
+                    className="flex items-center justify-between w-full text-gray-700 hover:text-orange-600 font-medium"
+                  >
+                    <span>Events</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isEventsOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isEventsOpen && (
+                    <div className="pl-4 space-y-2">
+                      {mockEvents.map((event, index) => (
+                        <a
+                          key={index}
+                          href={`#event-${event.id}`}
+                          className="block text-sm text-gray-600 hover:text-orange-600"
+                          onClick={() => {
+                            setIsEventsOpen(false);
+                            setIsMenuOpen(false);
+                          }}
+                        >
+                          {event.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <a href="#destinations" className="text-gray-700 hover:text-orange-600 font-medium">Destinations</a>
                 <a href="#properties" className="text-gray-700 hover:text-orange-600 font-medium">Properties</a>
                 <a href="#about" className="text-gray-700 hover:text-orange-600 font-medium">About</a>
-               <a
-    href="#contact"
-    className="text-gray-700 hover:text-orange-600 font-medium"
-  >
-    Contact
+                <a
+                  href="#contact"
+                  className="text-gray-700 hover:text-orange-600 font-medium"
+                >
+                  Contact
                 </a>
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   <button
