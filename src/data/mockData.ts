@@ -1,5 +1,16 @@
 import { Property, Booking, Transaction, Commission, Coupon, DashboardStats } from '../types';
 
+export const mockEvents = [
+  { id: '1', name: 'Wedding', description: 'Perfect venues for your special day' },
+  { id: '2', name: 'Corporate Event', description: 'Professional spaces for business gatherings' },
+  { id: '3', name: 'Birthday Party', description: 'Celebrate in style with our party venues' },
+  { id: '4', name: 'Anniversary', description: 'Romantic settings for milestone celebrations' },
+  { id: '5', name: 'Conference', description: 'Modern facilities for conferences and seminars' },
+  { id: '6', name: 'Workshop', description: 'Interactive spaces for learning and development' },
+  { id: '7', name: 'Reunion', description: 'Comfortable venues for family and friend gatherings' },
+  { id: '8', name: 'Product Launch', description: 'Impressive venues for product presentations' }
+];
+
 export const mockProperties: Property[] = [
   {
     id: '1',
