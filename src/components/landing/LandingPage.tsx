@@ -127,7 +127,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                       <a
                         key={index}
                         href={`#event-${event.id}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-orange-600"
+                        className="block px-4 py-2 text-sm text-gray-600 hover:text-orange-600 hover:bg-gray-50"
                         onClick={() => setIsEventsOpen(false)}
                       >
                         {event.name}
