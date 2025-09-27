@@ -112,7 +112,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <div className="relative">
+              <div className="relative events-dropdown">
                 <button
                   onClick={() => setIsEventsOpen(!isEventsOpen)}
                   className="flex items-center space-x-1 text-gray-700 hover:text-orange-600 font-medium"
@@ -180,7 +180,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="md:hidden py-4 border-t border-gray-200 mobile-menu">
               <div className="flex flex-col space-y-4">
                 <a href="#destinations" className="text-gray-700 hover:text-orange-600 font-medium">Destinations</a>
                 <a href="#properties" className="text-gray-700 hover:text-orange-600 font-medium">Properties</a>
