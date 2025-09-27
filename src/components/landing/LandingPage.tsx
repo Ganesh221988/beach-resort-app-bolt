@@ -9,6 +9,7 @@ interface LandingPageProps {
 
 export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isEventsOpen, setIsEventsOpen] = useState(false);
   const [searchData, setSearchData] = useState({
     destination: '',
     checkIn: '',
@@ -111,7 +112,42 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#destinations" className="text-gray-700 hover:text-orange-600 font-medium">Destinations</a>
+              <div className="relative">
+                <button
+                  onClick={() => setIsEventsOpen(!isEventsOpen)}
+                  className="flex items-center space-x-1 text-gray-700 hover:text-orange-600 font-medium"
+                >
+                  <span>Events</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isEventsOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setIsEventsOpen(!isEventsOpen)}
+                    className="flex items-center justify-between w-full text-gray-700 hover:text-orange-600 font-medium"
+                  >
+                    <span>Events</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isEventsOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isEventsOpen && (
+                    <div className="pl-4 space-y-2">
+                      {mockEvents.map((event, index) => (
+                        <a
+                          key={index}
+                          href={`#event-${event.id}`}
+                          className="block text-sm text-gray-600 hover:text-orange-600"
+                          onClick={() => {
+                            setIsEventsOpen(false);
+                            setIsMenuOpen(false);
+                          }}
+                        >
+                          {event.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                )}
+              </div>
               <a href="#properties" className="text-gray-700 hover:text-orange-600 font-medium">Properties</a>
               <a href="#about" className="text-gray-700 hover:text-orange-600 font-medium">About</a>
               <a href="#contact" className="text-gray-700 hover:text-orange-600 font-medium">Contact</a>
