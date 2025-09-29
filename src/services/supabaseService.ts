@@ -4,6 +4,58 @@ import { Property, Booking, User } from '../types';
 
 type Tables = Database['public']['Tables'];
 
+// Favorites Services
+export const favoritesService = {
+  async getUserFavorites(userId: string) {
+    const { data, error } = await supabase
+      .from('user_favorites')
+      .select(`
+        *,
+        properties (*)
+      `)
+      .eq('user_id', userId);
+    
+    if (error) throw error;
+    return data;
+  },
+
+  async addToFavorites(userId: string, propertyId: string) {
+    const { data, error } = await supabase
+      .from('user_favorites')
+      .insert({
+        user_id: userId,
+        property_id: propertyId
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  },
+
+  async removeFromFavorites(userId: string, propertyId: string) {
+    const { error } = await supabase
+      .from('user_favorites')
+      .delete()
+      .eq('user_id', userId)
+      .eq('property_id', propertyId);
+    
+    if (error) throw error;
+  },
+
+  async isFavorite(userId: string, propertyId: string) {
+    const { data, error } = await supabase
+      .from('user_favorites')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('property_id', propertyId)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') throw error;
+    return !!data;
+  }
+};
+
 // User Profile Services
 export const userService = {
   async getProfile(userId: string) {

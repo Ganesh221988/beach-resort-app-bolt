@@ -160,17 +160,36 @@ export function CustomerDashboard() {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900">My Favorites</h2>
       
-      <div className="text-center py-12">
-        <Heart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites yet</h3>
-        <p className="text-gray-600 mb-6">Save properties you love by clicking the heart icon</p>
-        <button 
-          onClick={() => setActiveTab('discover')}
-          className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
-        >
-          Browse Properties
-        </button>
-      </div>
+      {favoriteProperties.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {favoriteProperties.map((property) => (
+            <div key={property.id} className="relative">
+              <PropertyCard 
+                property={property} 
+                onSelect={handlePropertySelect}
+              />
+              <button
+                onClick={() => handleRemoveFromFavorites(property.id)}
+                className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+              >
+                <Heart className="h-4 w-4 fill-current" />
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <Heart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites yet</h3>
+          <p className="text-gray-600 mb-6">Save properties you love by clicking the heart icon</p>
+          <button 
+            onClick={() => setActiveTab('discover')}
+            className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+          >
+            Browse Properties
+          </button>
+        </div>
+      )}
     </div>
   );
 

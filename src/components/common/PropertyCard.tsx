@@ -98,7 +98,19 @@ export function PropertyCard({ property, onSelect, showBookButton = true }: Prop
           
           {showBookButton && (
             <button 
-              onClick={() => onSelect?.(property)}
+              onClick={() => {
+                if (!user) {
+                  onLogin?.();
+                  return;
+                }
+                
+                if (user.role !== 'customer' && user.role !== 'broker') {
+                  alert('Only customers and brokers can make bookings.');
+                  return;
+                }
+                
+                onSelect?.(property);
+              }}
               className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
             >
               Book Now

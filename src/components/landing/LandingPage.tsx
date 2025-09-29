@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, MapPin, Calendar, Users, Star, ChevronRight, ChevronDown, Menu, X, User, Heart, Shield, Award, Globe } from 'lucide-react';
 import { mockEvents } from '../../data/mockData';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -8,6 +9,7 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
+  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEventsOpen, setIsEventsOpen] = useState(false);
   const [searchData, setSearchData] = useState({
@@ -90,8 +92,47 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to signup for demo
-    onSignup();
+    // Check if user is logged in
+    if (!user) {
+      onLogin();
+      return;
+    }
+    // If logged in, proceed with search (would normally navigate to search results)
+    console.log('Searching with:', searchData);
+  };
+
+  const handleFavoriteClick = (propertyId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      // Not logged in, show login page
+      onLogin();
+      return;
+    }
+    
+    // User is logged in, add to favorites
+    console.log(`Adding property ${propertyId} to favorites for user ${user.id}`);
+    // TODO: Implement actual favorite functionality with database
+    alert('Property added to favorites!');
+  };
+
+  const handleBookNow = (propertyId: number) => {
+    if (!user) {
+      // Not logged in, show login page
+      onLogin();
+      return;
+    }
+    
+    // Check if user is customer or broker
+    if (user.role !== 'customer' && user.role !== 'broker') {
+      alert('Only customers and brokers can make bookings.');
+      return;
+    }
+    
+    // User is logged in and has permission, proceed with booking
+    console.log(`Starting booking for property ${propertyId} by user ${user.id} (${user.role})`);
+    // TODO: Implement actual booking flow
+    alert(`Booking initiated for property ${propertyId}!`);
   };
 
   return (
@@ -473,7 +514,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{event.name}</h3>
                   <p className="text-gray-600 mb-4">{event.description}</p>
                   <button 
-                    onClick={onSignup}
+                    onClick={() => {
+                      if (!user) {
+                        onLogin();
+                      } else {
+                        console.log(`Finding venues for ${event.name}`);
+                      }
+                    }}
                     className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   >
                     Find Venues
