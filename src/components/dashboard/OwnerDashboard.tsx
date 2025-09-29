@@ -447,6 +447,21 @@ export function OwnerDashboard() {
           />
         </div>
       )}
+      
+      {/* Other Property Booking Flow */}
+      {showOtherBookingFlow && selectedOtherProperty && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+          <BookingFlow
+            property={selectedOtherProperty}
+            onComplete={handleOtherBookingComplete}
+            onCancel={() => {
+              setShowOtherBookingFlow(false);
+              setSelectedOtherProperty(null);
+            }}
+            userRole="broker"
+          />
+        </div>
+      )}
     </div>
   );
 }
