@@ -96,8 +96,10 @@ export function PropertyCard({ property, onSelect, showBookButton = true }: Prop
             <span className="text-gray-600 text-sm">/ night</span>
           </div>
           
-          {showBookButton && (
-            <button className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors">
+              <button 
+                onClick={() => onSelect?.(property)}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+              >
               onClick={() => onSelect?.(property)}
               Book Now
             </button>

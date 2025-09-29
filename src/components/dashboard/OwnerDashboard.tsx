@@ -124,11 +124,11 @@ export function OwnerDashboard() {
           <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors group">
-            <Plus 
-              className="h-6 w-6 text-gray-400 group-hover:text-orange-500" 
-              onClick={() => setShowPropertyForm(true)}
-            />
+          <button 
+            onClick={() => setShowPropertyForm(true)}
+            className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors group"
+          >
+            <Plus className="h-6 w-6 text-gray-400 group-hover:text-orange-500" />
             <div className="text-left">
               <p className="font-medium text-gray-900 group-hover:text-orange-600">Add New Property</p>
               <p className="text-sm text-gray-500">List a new villa or resort</p>
@@ -201,7 +201,10 @@ export function OwnerDashboard() {
             <option>Confirmed</option>
             <option>Completed</option>
           </select>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors">
+          <button 
+            onClick={() => setShowBookingFlow(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+          >
             <Plus className="h-4 w-4" />
             <span>Manual Booking</span>
           </button>

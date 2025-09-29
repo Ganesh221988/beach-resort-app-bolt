@@ -104,11 +104,11 @@ export function BrokerDashboard() {
           <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors group">
-            <Plus 
-              className="h-6 w-6 text-gray-400 group-hover:text-green-500"
-              onClick={() => setShowBookingFlow(true)}
-            />
+          <button 
+            onClick={() => setShowBookingFlow(true)}
+            className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors group"
+          >
+            <Plus className="h-6 w-6 text-gray-400 group-hover:text-green-500" />
             <div className="text-left">
               <p className="font-medium text-gray-900 group-hover:text-green-600">Create Booking</p>
               <p className="text-sm text-gray-500">Book for a customer</p>
@@ -137,7 +137,10 @@ export function BrokerDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">My Bookings</h2>
-        <button className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors">
+        <button 
+          onClick={() => setShowBookingFlow(true)}
+          className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+        >
           <Plus className="h-4 w-4" />
           <span>Create Booking</span>
         </button>
