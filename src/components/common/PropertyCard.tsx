@@ -100,7 +100,7 @@ export function PropertyCard({ property, onSelect, showBookButton = true }: Prop
             <button 
               onClick={() => {
                 if (!user) {
-                  onLogin?.();
+                 onLogin?.();
                   return;
                 }
                 

@@ -426,7 +426,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      onSignup();
+                     onLogin();
                     }}
                     className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
                   >
@@ -475,7 +475,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   </div>
                   
                   <button 
-                    onClick={onSignup}
+                   onClick={onLogin}
                     className="w-full mt-3 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   >
                     Book Now
@@ -606,7 +606,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 </div>
               </div>
               <button 
-                onClick={onSignup}
+               onClick={onLogin}
                 className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
               >
                 Join Our Community
@@ -712,7 +712,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <p>📍 Mumbai, Maharashtra, India</p>
                 <div className="mt-4">
                   <button 
-                    onClick={onSignup}
+                   onClick={onLogin}
                     className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   >
                     Contact Us
