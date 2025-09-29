@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { LogOut, User, Settings, Crown, Building2, Users, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { AdminSettings } from '../admin/AdminSettings';
+import { OwnerSettings } from '../owner/OwnerSettings';
 
 export function Navbar() {
   const { user, logout, switchRole } = useAuth();
@@ -83,6 +84,11 @@ export function Navbar() {
       {/* Admin Settings Modal */}
       {showSettings && user?.role === 'admin' && (
         <AdminSettings onClose={() => setShowSettings(false)} />
+      )}
+      
+      {/* Owner Settings Modal */}
+      {showSettings && user?.role === 'owner' && (
+        <OwnerSettings onClose={() => setShowSettings(false)} />
       )}
     </nav>
   );
