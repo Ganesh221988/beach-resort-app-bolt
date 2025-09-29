@@ -4,6 +4,7 @@ import { LogOut, User, Settings, Crown, Building2, Users, ShoppingBag } from 'lu
 import { useAuth } from '../../contexts/AuthContext';
 import { AdminSettings } from '../admin/AdminSettings';
 import { OwnerSettings } from '../owner/OwnerSettings';
+import { BrokerSettings } from '../broker/BrokerSettings';
 
 export function Navbar() {
   const { user, logout, switchRole } = useAuth();
@@ -86,6 +87,10 @@ export function Navbar() {
         <AdminSettings onClose={() => setShowSettings(false)} />
       )}
       
+      {/* Broker Settings Modal */}
+      {showSettings && user?.role === 'broker' && (
+        <BrokerSettings onClose={() => setShowSettings(false)} />
+      )}
       {/* Owner Settings Modal */}
       {showSettings && user?.role === 'owner' && (
         <OwnerSettings onClose={() => setShowSettings(false)} />
