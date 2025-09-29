@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Calendar, IndianRupee, TrendingUp, Plus, Camera, Settings, CalendarDays } from 'lucide-react';
+import { Building2, Calendar, IndianRupee, TrendingUp, Plus, Camera, Settings, CalendarDays, Search, Filter, MapPin, Star } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { mockDashboardStats, mockBookings, mockProperties } from '../../data/mockData';
 import { BookingCard } from '../common/BookingCard';
@@ -15,6 +15,10 @@ export function OwnerDashboard() {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [showBookingFlow, setShowBookingFlow] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [cityFilter, setCityFilter] = useState('all');
+  const [showOtherBookingFlow, setShowOtherBookingFlow] = useState(false);
+  const [selectedOtherProperty, setSelectedOtherProperty] = useState<Property | null>(null);
   const stats = mockDashboardStats.owner;
 
   const tabs = [
@@ -22,11 +26,53 @@ export function OwnerDashboard() {
     { id: 'properties', label: 'My Properties', icon: Building2 },
     { id: 'bookings', label: 'Bookings', icon: Calendar },
     { id: 'calendar', label: 'Calendar', icon: CalendarDays },
-    { id: 'earnings', label: 'Earnings', icon: IndianRupee }
+    { id: 'earnings', label: 'Earnings', icon: IndianRupee },
+    { id: 'other-bookings', label: 'Other Property Bookings', icon: Search }
   ];
 
   const ownerBookings = mockBookings.filter(b => b.owner_id === 'ECO2547001');
   const ownerProperties = mockProperties.filter(p => p.owner_id === 'ECO2547001');
+  
+  // Other properties (not owned by current owner) for broker bookings
+  const otherProperties = mockProperties.filter(p => p.owner_id !== 'ECO2547001');
+  
+  // Mock broker bookings made by this owner
+  const ownerBrokerBookings = [
+    {
+      id: '3',
+      property_id: '2',
+      property_title: 'Mountain View Resort',
+      room_type_ids: ['3'],
+      room_types: ['Deluxe Suite'],
+      customer_id: 'ECC1547002',
+      customer_name: 'Alice Smith',
+      broker_id: 'ECO2547001', // Current owner acting as broker
+      broker_name: 'John Smith',
+      owner_id: 'ECO2547002',
+      start_date: '2024-04-20T14:00:00Z',
+      end_date: '2024-04-22T12:00:00Z',
+      duration_type: 'day' as const,
+      guests: 2,
+      total_amount: 14400,
+      platform_commission: 1440,
+      broker_commission: 288,
+      net_to_owner: 12672,
+      status: 'confirmed' as const,
+      payment_status: 'success' as const,
+      created_at: '2024-04-01T10:30:00Z'
+    }
+  ];
+  
+  // Filter other properties based on search and city
+  const filteredOtherProperties = otherProperties.filter(property => {
+    const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         property.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCity = cityFilter === 'all' || property.city === cityFilter;
+    return matchesSearch && matchesCity;
+  });
+  
+  // Get unique cities for filter
+  const availableCities = ['all', ...new Set(otherProperties.map(p => p.city))];
   
   const handlePropertySave = (propertyData: Partial<Property>) => {
     console.log('Saving property:', propertyData);
@@ -38,6 +84,21 @@ export function OwnerDashboard() {
     console.log('Creating booking:', bookingData);
     setShowBookingFlow(false);
     setSelectedProperty(null);
+  };
+  
+  const handleOtherPropertySelect = (property: Property) => {
+    setSelectedOtherProperty(property);
+    setShowOtherBookingFlow(true);
+  };
+  
+  const handleOtherBookingComplete = (bookingData: Partial<Booking>) => {
+    console.log('Creating broker booking:', bookingData);
+    setShowOtherBookingFlow(false);
+    setSelectedOtherProperty(null);
+  };
+  
+  const requestCommissionPayout = () => {
+    alert('Commission payout request submitted successfully!');
   };
 
   const renderOverview = () => (
