@@ -297,9 +297,6 @@ export function OwnerDashboard() {
                 <span className="font-semibold text-gray-900">Mar 15, 2024</span>
               </div>
             </div>
-            <button className="w-full mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors">
-              Request Payout
-            </button>
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 p-6">
