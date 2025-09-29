@@ -404,23 +404,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                       {property.reviews} reviews
                     </div>
                   </div>
-                  
-                  <button 
-                    onClick={onSignup}
-                    className="w-full mt-3 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
-                  >
-                    Book Now
-                  </button>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="text-center mt-12">
-            <button 
-              onClick={onSignup}
-              className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
+            <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
               View All Properties
             </button>
           </div>
