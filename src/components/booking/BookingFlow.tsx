@@ -4,14 +4,17 @@ import { Property, RoomType, Booking } from '../../types';
 
 interface BookingFlowProps {
   property: Property;
+  properties?: Property[];
   onComplete: (booking: Partial<Booking>) => void;
   onCancel: () => void;
   userRole?: 'customer' | 'broker';
   customerId?: string;
+  isManualBooking?: boolean;
 }
 
-export function BookingFlow({ property, onComplete, onCancel, userRole = 'customer', customerId }: BookingFlowProps) {
+export function BookingFlow({ property, properties = [], onComplete, onCancel, userRole = 'customer', customerId, isManualBooking = false }: BookingFlowProps) {
   const [step, setStep] = useState(1);
+  const [selectedPropertyId, setSelectedPropertyId] = useState(property.id);
   const [bookingData, setBookingData] = useState({
     room_type_ids: [] as string[],
     start_date: '',
@@ -36,7 +39,8 @@ export function BookingFlow({ property, onComplete, onCancel, userRole = 'custom
     net_to_owner: 0
   });
 
-  const selectedRooms = property.room_types.filter(room => 
+  const currentProperty = properties.find(p => p.id === selectedPropertyId) || property;
+  const selectedRooms = currentProperty.room_types.filter(room => 
     bookingData.room_type_ids.includes(room.id)
   );
 
@@ -100,15 +104,15 @@ export function BookingFlow({ property, onComplete, onCancel, userRole = 'custom
 
   const handleComplete = () => {
     const booking: Partial<Booking> = {
-      property_id: property.id,
-      property_title: property.title,
+      property_id: currentProperty.id,
+      property_title: currentProperty.title,
       room_type_ids: bookingData.room_type_ids,
       room_types: selectedRooms.map(r => r.title),
       start_date: bookingData.duration_type === 'day' 
         ? `${bookingData.start_date}T${property.check_in_time}:00Z`
         : `${bookingData.start_date}T${bookingData.start_time}:00Z`,
       end_date: bookingData.duration_type === 'day'
-        ? `${bookingData.end_date}T${property.check_out_time}:00Z`
+        ? `${bookingData.end_date}T${currentProperty.check_out_time}:00Z`
         : `${bookingData.start_date}T${bookingData.end_time}:00Z`,
       duration_type: bookingData.duration_type,
       guests: bookingData.guests,
@@ -129,6 +133,27 @@ export function BookingFlow({ property, onComplete, onCancel, userRole = 'custom
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900">Select Rooms & Dates</h2>
       
+      {/* Property Selection for Manual Booking */}
+      {isManualBooking && properties.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">Select Property</label>
+          <select
+            value={selectedPropertyId}
+            onChange={(e) => {
+              setSelectedPropertyId(e.target.value);
+              setBookingData(prev => ({ ...prev, room_type_ids: [] })); // Reset room selection
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+          >
+            {properties.map((prop) => (
+              <option key={prop.id} value={prop.id}>
+                {prop.title} - {prop.city}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Duration Type */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">Booking Type</label>
@@ -218,7 +243,7 @@ export function BookingFlow({ property, onComplete, onCancel, userRole = 'custom
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">Select Rooms</label>
         <div className="space-y-3">
-          {property.room_types.map((room) => (
+          {currentProperty.room_types.map((room) => (
             <div
               key={room.id}
               className={`p-4 border rounded-lg cursor-pointer transition-colors ${

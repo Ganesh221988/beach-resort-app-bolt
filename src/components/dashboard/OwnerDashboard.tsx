@@ -380,10 +380,12 @@ export function OwnerDashboard() {
       {showBookingFlow && ownerProperties.length > 0 && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
           <BookingFlow
-            property={ownerProperties[0]} // Default to first property
+            property={ownerProperties[0]}
+            properties={ownerProperties}
             onComplete={handleBookingComplete}
             onCancel={() => setShowBookingFlow(false)}
             userRole="customer" // Owner creating booking for customer
+            isManualBooking={true}
           />
         </div>
       )}

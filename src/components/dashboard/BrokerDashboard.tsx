@@ -291,12 +291,14 @@ export function BrokerDashboard() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
           <BookingFlow
             property={selectedProperty || mockProperties[0]}
+            properties={mockProperties}
             onComplete={handleBookingComplete}
             onCancel={() => {
               setShowBookingFlow(false);
               setSelectedProperty(null);
             }}
             userRole="broker"
+            isManualBooking={!selectedProperty}
           />
         </div>
       )}
