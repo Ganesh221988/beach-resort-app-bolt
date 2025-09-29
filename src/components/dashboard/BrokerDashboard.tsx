@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Users, IndianRupee, TrendingUp, Calendar, Plus, Search, UserPlus } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
+import { SubscriptionBadge } from '../common/SubscriptionBadge';
 import { mockDashboardStats, mockBookings, mockCommissions, mockProperties } from '../../data/mockData';
 import { BookingCard } from '../common/BookingCard';
 import { PropertyCard } from '../common/PropertyCard';
@@ -256,8 +257,17 @@ export function BrokerDashboard() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">ECR Beach Resorts - Broker</h1>
-          <p className="text-gray-600">Manage bookings and track your commissions</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">ECR Beach Resorts - Broker</h1>
+              <p className="text-gray-600">Manage bookings and track your commissions</p>
+            </div>
+            <SubscriptionBadge 
+              planName="Broker Plus" 
+              expiryDate="2024-05-20T00:00:00Z" 
+              userRole="broker" 
+            />
+          </div>
         </div>
 
         <div className="flex space-x-1 mb-8 bg-gray-200 rounded-lg p-1">

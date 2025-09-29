@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Building2, Calendar, IndianRupee, TrendingUp, Plus, Camera, Settings, CalendarDays, Search, Filter, MapPin, Star } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
+import { SubscriptionBadge } from '../common/SubscriptionBadge';
 import { mockDashboardStats, mockBookings, mockProperties } from '../../data/mockData';
 import { BookingCard } from '../common/BookingCard';
 import { PropertyCard } from '../common/PropertyCard';
@@ -389,8 +390,17 @@ export function OwnerDashboard() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">ECR Beach Resorts - Owner</h1>
-          <p className="text-gray-600">Manage your properties and bookings</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">ECR Beach Resorts - Owner</h1>
+              <p className="text-gray-600">Manage your properties and bookings</p>
+            </div>
+            <SubscriptionBadge 
+              planName="Owner Pro" 
+              expiryDate="2024-04-15T00:00:00Z" 
+              userRole="owner" 
+            />
+          </div>
         </div>
 
         <div className="flex space-x-1 mb-8 bg-gray-200 rounded-lg p-1">

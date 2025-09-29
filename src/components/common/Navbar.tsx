@@ -1,9 +1,12 @@
 import React from 'react';
+import { useState } from 'react';
 import { LogOut, User, Settings, Crown, Building2, Users, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { AdminSettings } from '../admin/AdminSettings';
 
 export function Navbar() {
   const { user, logout, switchRole } = useAuth();
+  const [showSettings, setShowSettings] = useState(false);
 
   const roleConfig = {
     admin: { icon: Crown, label: 'Admin', color: 'text-purple-600' },
@@ -59,7 +62,10 @@ export function Navbar() {
               </div>
               
               <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                <Settings className="h-5 w-5" />
+                <Settings 
+                  className="h-5 w-5 cursor-pointer" 
+                  onClick={() => setShowSettings(true)}
+                />
               </button>
               
               <button 
@@ -73,6 +79,11 @@ export function Navbar() {
           </div>
         </div>
       </div>
+      
+      {/* Admin Settings Modal */}
+      {showSettings && user?.role === 'admin' && (
+        <AdminSettings onClose={() => setShowSettings(false)} />
+      )}
     </nav>
   );
 }
