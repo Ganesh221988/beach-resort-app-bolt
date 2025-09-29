@@ -11,10 +11,11 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEventsOpen, setIsEventsOpen] = useState(false);
   const [searchData, setSearchData] = useState({
-    destination: '',
+    selectedEvent: '',
     checkIn: '',
     checkOut: '',
-    guests: 2
+    adults: 1,
+    children: 0
   });
 
   const featuredDestinations = [
@@ -243,16 +244,21 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Events</label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      value={searchData.destination}
-                      onChange={(e) => setSearchData(prev => ({ ...prev, destination: e.target.value }))}
-                      placeholder="Where are you going?"
+                    <select
+                      value={searchData.selectedEvent}
+                      onChange={(e) => setSearchData(prev => ({ ...prev, selectedEvent: e.target.value }))}
                       className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    />
+                    >
+                      <option value="">Select Event Type</option>
+                      {mockEvents.map((event) => (
+                        <option key={event.id} value={event.id}>
+                          {event.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
@@ -282,19 +288,31 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Guests</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
+                    <div className="relative">
+                      <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="number"
+                        value={searchData.adults}
+                        onChange={(e) => setSearchData(prev => ({ ...prev, adults: parseInt(e.target.value) || 1 }))}
+                        min="1"
+                        max="20"
+                        className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      />
+                    </div>
+                  </div>
                   <div className="relative">
-                    <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <select
-                      value={searchData.guests}
-                      onChange={(e) => setSearchData(prev => ({ ...prev, guests: parseInt(e.target.value) }))}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
+                    <input
+                      type="number"
+                      value={searchData.children}
+                      onChange={(e) => setSearchData(prev => ({ ...prev, children: parseInt(e.target.value) || 0 }))}
+                      min="0"
+                      max="10"
                       className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    >
-                      {[1,2,3,4,5,6,7,8].map(num => (
-                        <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
-                      ))}
-                    </select>
+                    />
                   </div>
                 </div>
               </div>
