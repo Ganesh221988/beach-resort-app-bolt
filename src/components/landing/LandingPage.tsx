@@ -20,28 +20,28 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   const featuredDestinations = [
     {
-      name: 'Goa',
+      name: 'Weddings',
       properties: 245,
-      image: 'https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg?auto=compress&cs=tinysrgb&w=800',
-      description: 'Beach paradise with luxury resorts'
+      image: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800',
+      description: 'Dream venues for your perfect wedding day'
     },
     {
-      name: 'Manali',
+      name: 'Corporate Events',
       properties: 156,
-      image: 'https://images.pexels.com/photos/1562058/pexels-photo-1562058.jpeg?auto=compress&cs=tinysrgb&w=800',
-      description: 'Mountain retreats and hill stations'
+      image: 'https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=800',
+      description: 'Professional venues for business gatherings'
     },
     {
-      name: 'Udaipur',
+      name: 'Family Reunions',
       properties: 89,
-      image: 'https://images.pexels.com/photos/3881104/pexels-photo-3881104.jpeg?auto=compress&cs=tinysrgb&w=800',
-      description: 'Royal palaces and lake views'
+      image: 'https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=800',
+      description: 'Spacious venues for family celebrations'
     },
     {
-      name: 'Kerala',
+      name: 'Team Outings',
       properties: 198,
-      image: 'https://images.pexels.com/photos/962464/pexels-photo-962464.jpeg?auto=compress&cs=tinysrgb&w=800',
-      description: 'Backwaters and tropical escapes'
+      image: 'https://images.pexels.com/photos/1181533/pexels-photo-1181533.jpeg?auto=compress&cs=tinysrgb&w=800',
+      description: 'Perfect locations for team building activities'
     }
   ];
 
@@ -332,15 +332,15 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
       </section>
 
       {/* Featured Destinations */}
-      <section id="destinations" className="py-20 bg-gray-50">
+      <section id="events" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Popular Destinations</h2>
-            <p className="text-xl text-gray-600">Explore our most loved destinations across India</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Popular Events</h2>
+            <p className="text-xl text-gray-600">Explore our most loved celebrations</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredDestinations.map((destination, index) => (
+            {featuredDestinations.map((event, index) => (
               <div 
                 key={index} 
                 className="group cursor-pointer"
@@ -348,15 +348,15 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
               >
                 <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                   <img
-                    src={destination.image}
-                    alt={destination.name}
+                    src={event.image}
+                    alt={event.name}
                     className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="text-xl font-bold mb-1">{destination.name}</h3>
-                    <p className="text-sm opacity-90">{destination.properties} properties</p>
-                    <p className="text-xs opacity-75">{destination.description}</p>
+                    <h3 className="text-xl font-bold mb-1">{event.name}</h3>
+                    <p className="text-sm opacity-90">{event.properties} venues</p>
+                    <p className="text-xs opacity-75">{event.description}</p>
                   </div>
                 </div>
               </div>
