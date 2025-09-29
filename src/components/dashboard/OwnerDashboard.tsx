@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Building2, Calendar, IndianRupee, TrendingUp, Plus, Camera, Settings, CalendarDays, Search, Filter, MapPin, Star } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { SubscriptionBadge } from '../common/SubscriptionBadge';
-import { mockDashboardStats, mockBookings, mockProperties } from '../../data/mockData';
+import { useSupabaseQuery } from '../../hooks/useSupabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { statsService } from '../../services/supabaseService';
 import { BookingCard } from '../common/BookingCard';
 import { PropertyCard } from '../common/PropertyCard';
 import { PropertyForm } from '../property/PropertyForm';
@@ -12,6 +14,12 @@ import { Property, Booking } from '../../types';
 
 export function OwnerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const { user } = useAuth();
+  const [stats, setStats] = useState<any>({});
+
+  const { data: ownerProperties } = useSupabaseQuery('properties', { filter: user ? { owner_id: user.id } : undefined });
+  const { data: ownerBookings } = useSupabaseQuery('bookings', { filter: user ? { owner_id: user.id } : undefined });
+  const { data: allProperties } = useSupabaseQuery('properties', { filter: { status: 'active' } });
   const [showPropertyForm, setShowPropertyForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
@@ -20,7 +28,6 @@ export function OwnerDashboard() {
   const [cityFilter, setCityFilter] = useState('all');
   const [showOtherBookingFlow, setShowOtherBookingFlow] = useState(false);
   const [selectedOtherProperty, setSelectedOtherProperty] = useState<Property | null>(null);
-  const stats = mockDashboardStats.owner;
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -31,11 +38,6 @@ export function OwnerDashboard() {
     { id: 'other-bookings', label: 'Other Property Bookings', icon: Search }
   ];
 
-  const ownerBookings = mockBookings.filter(b => b.owner_id === 'ECO2547001');
-  const ownerProperties = mockProperties.filter(p => p.owner_id === 'ECO2547001');
-  
-  // Other properties (not owned by current owner) for broker bookings
-  const otherProperties = mockProperties.filter(p => p.owner_id !== 'ECO2547001');
   
   // Mock broker bookings made by this owner
   const ownerBrokerBookings = [
@@ -64,10 +66,19 @@ export function OwnerDashboard() {
     }
   ];
   
+  React.useEffect(() => {
+    if (user) {
+      statsService.getDashboardStats(user.id, user.role).then(setStats);
+    }
+  }, [user]);
+
+  // Other properties (not owned by current owner) for broker bookings
+  const otherProperties = allProperties?.filter(p => p.owner_id !== user?.id) || [];
+
   // Filter other properties based on search and city
   const filteredOtherProperties = otherProperties.filter(property => {
     const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         property.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         (property.description || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCity = cityFilter === 'all' || property.city === cityFilter;
     return matchesSearch && matchesCity;
   });
@@ -107,28 +118,28 @@ export function OwnerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="My Properties"
-          value={stats.total_properties || 0}
+          value={stats.total_properties || ownerProperties?.length || 0}
           icon={Building2}
           color="blue"
           change={stats.monthly_growth}
         />
         <StatsCard
           title="Total Bookings"
-          value={stats.total_bookings}
+          value={stats.total_bookings || ownerBookings?.length || 0}
           icon={Calendar}
           color="green"
           change={stats.monthly_growth}
         />
         <StatsCard
           title="Total Earnings"
-          value={stats.total_revenue}
+          value={stats.total_revenue || 0}
           icon={IndianRupee}
           color="orange"
           change={stats.monthly_growth}
         />
         <StatsCard
           title="Occupancy Rate"
-          value={`${stats.occupancy_rate}%`}
+          value={`${stats.occupancy_rate || 0}%`}
           icon={TrendingUp}
           color="purple"
           change={2.3}
@@ -144,7 +155,7 @@ export function OwnerDashboard() {
             </button>
           </div>
           <div className="space-y-4">
-            {ownerBookings.slice(0, 3).map((booking) => (
+            {(ownerBookings || []).slice(0, 3).map((booking) => (
               <BookingCard key={booking.id} booking={booking} userRole="owner" />
             ))}
           </div>
@@ -156,25 +167,25 @@ export function OwnerDashboard() {
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div>
                 <p className="text-sm text-gray-600">Gross Earnings</p>
-                <p className="text-2xl font-bold text-green-600">₹{stats.total_revenue.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-green-600">₹{(stats.total_revenue || 0).toLocaleString()}</p>
               </div>
             </div>
             <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
               <div>
                 <p className="text-sm text-gray-600">Platform Fees</p>
-                <p className="text-xl font-bold text-orange-600">-₹{(stats.total_revenue * 0.1).toLocaleString()}</p>
+                <p className="text-xl font-bold text-orange-600">-₹{((stats.total_revenue || 0) * 0.1).toLocaleString()}</p>
               </div>
             </div>
             <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
               <div>
                 <p className="text-sm text-gray-600">Broker Commissions</p>
-                <p className="text-xl font-bold text-blue-600">-₹{(stats.total_revenue * 0.02).toLocaleString()}</p>
+                <p className="text-xl font-bold text-blue-600">-₹{((stats.total_revenue || 0) * 0.02).toLocaleString()}</p>
               </div>
             </div>
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
               <div>
                 <p className="text-sm text-gray-600">Net Earnings</p>
-                <p className="text-2xl font-bold text-gray-900">₹{(stats.total_revenue * 0.88).toLocaleString()}</p>
+                <p className="text-2xl font-bold text-gray-900">₹{((stats.total_revenue || 0) * 0.88).toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -232,7 +243,7 @@ export function OwnerDashboard() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {ownerProperties.map((property) => (
+        {(ownerProperties || []).map((property) => (
           <div key={property.id} className="relative">
             <PropertyCard property={property} showBookButton={false} />
             <div className="absolute top-4 right-4 flex space-x-2">
@@ -274,7 +285,7 @@ export function OwnerDashboard() {
       </div>
       
       <div className="space-y-4">
-        {ownerBookings.map((booking) => (
+        {(ownerBookings || []).map((booking) => (
           <BookingCard key={booking.id} booking={booking} showActions userRole="owner" />
         ))}
       </div>
@@ -288,12 +299,12 @@ export function OwnerDashboard() {
         <select 
           className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
           onChange={(e) => {
-            const property = ownerProperties.find(p => p.id === e.target.value);
+            const property = ownerProperties?.find(p => p.id === e.target.value);
             setSelectedProperty(property || null);
           }}
         >
           <option value="">Select Property</option>
-          {ownerProperties.map(property => (
+          {(ownerProperties || []).map(property => (
             <option key={property.id} value={property.id}>{property.title}</option>
           ))}
         </select>
@@ -324,7 +335,7 @@ export function OwnerDashboard() {
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Transaction History</h3>
           <div className="space-y-4">
-            {ownerBookings.map((booking) => (
+            {(ownerBookings || []).map((booking) => (
               <div key={booking.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div>
                   <p className="font-medium text-gray-900">Booking #{booking.id.slice(0, 8)}</p>
@@ -332,7 +343,7 @@ export function OwnerDashboard() {
                   <p className="text-xs text-gray-500">{new Date(booking.created_at).toLocaleDateString()}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-green-600">+₹{booking.net_to_owner.toLocaleString()}</p>
+                  <p className="font-semibold text-green-600">+₹{(booking.net_to_owner || 0).toLocaleString()}</p>
                   <p className="text-xs text-gray-500">
                     {booking.payment_status === 'success' ? 'Received' : 'Pending'}
                   </p>
@@ -348,7 +359,7 @@ export function OwnerDashboard() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Available Balance</span>
-                <span className="font-semibold text-green-600">₹{(stats.pending_payouts || 0).toLocaleString()}</span>
+                <span className="font-semibold text-green-600">₹{((stats.pending_payouts || 0)).toLocaleString()}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Pending Clearance</span>
@@ -445,11 +456,11 @@ export function OwnerDashboard() {
       )}
       
       {/* Manual Booking Flow */}
-      {showBookingFlow && ownerProperties.length > 0 && (
+      {showBookingFlow && (ownerProperties || []).length > 0 && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
           <BookingFlow
-            property={ownerProperties[0]}
-            properties={ownerProperties}
+            property={(ownerProperties || [])[0]}
+            properties={ownerProperties || []}
             onComplete={handleBookingComplete}
             onCancel={() => setShowBookingFlow(false)}
             userRole="customer" // Owner creating booking for customer

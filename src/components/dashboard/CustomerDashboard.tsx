@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Calendar, MapPin, Heart, Star, Search, Filter } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
-import { mockDashboardStats, mockBookings, mockProperties } from '../../data/mockData';
+import { useSupabaseQuery } from '../../hooks/useSupabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { statsService } from '../../services/supabaseService';
 import { BookingCard } from '../common/BookingCard';
 import { PropertyCard } from '../common/PropertyCard';
 import { BookingFlow } from '../booking/BookingFlow';
@@ -9,9 +11,13 @@ import { Property, Booking } from '../../types';
 
 export function CustomerDashboard() {
   const [activeTab, setActiveTab] = useState('discover');
+  const { user } = useAuth();
+  const [stats, setStats] = useState<any>({});
+
+  const { data: customerBookings } = useSupabaseQuery('bookings', { filter: user ? { customer_id: user.id } : undefined });
+  const { data: allProperties } = useSupabaseQuery('properties', { filter: { status: 'active' } });
   const [showBookingFlow, setShowBookingFlow] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const stats = mockDashboardStats.customer;
 
   const tabs = [
     { id: 'discover', label: 'Discover', icon: Search },
@@ -19,7 +25,11 @@ export function CustomerDashboard() {
     { id: 'favorites', label: 'Favorites', icon: Heart }
   ];
 
-  const customerBookings = mockBookings.filter(b => b.customer_id === 'ECC1547001');
+  React.useEffect(() => {
+    if (user) {
+      statsService.getDashboardStats(user.id, user.role).then(setStats);
+    }
+  }, [user]);
   
   const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property);
@@ -59,13 +69,13 @@ export function CustomerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <StatsCard
           title="Total Trips"
-          value={stats.total_bookings}
+          value={stats.total_bookings || customerBookings?.length || 0}
           icon={Calendar}
           color="blue"
         />
         <StatsCard
           title="Money Spent"
-          value={stats.total_revenue}
+          value={stats.total_revenue || 0}
           icon={Star}
           color="green"
         />
@@ -99,7 +109,7 @@ export function CustomerDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockProperties.map((property) => (
+        {(allProperties || []).map((property) => (
           <PropertyCard 
             key={property.id} 
             property={property} 
@@ -124,9 +134,9 @@ export function CustomerDashboard() {
         </div>
       </div>
 
-      {customerBookings.length > 0 ? (
+      {(customerBookings || []).length > 0 ? (
         <div className="space-y-4">
-          {customerBookings.map((booking) => (
+          {(customerBookings || []).map((booking) => (
             <BookingCard key={booking.id} booking={booking} showActions userRole="customer" />
           ))}
         </div>

@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Users, IndianRupee, TrendingUp, Calendar, Plus, Search, UserPlus } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { SubscriptionBadge } from '../common/SubscriptionBadge';
-import { mockDashboardStats, mockBookings, mockCommissions, mockProperties } from '../../data/mockData';
+import { useSupabaseQuery } from '../../hooks/useSupabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { statsService } from '../../services/supabaseService';
 import { BookingCard } from '../common/BookingCard';
 import { PropertyCard } from '../common/PropertyCard';
 import { BookingFlow } from '../booking/BookingFlow';
@@ -10,9 +12,14 @@ import { Property, Booking } from '../../types';
 
 export function BrokerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const { user } = useAuth();
+  const [stats, setStats] = useState<any>({});
+
+  const { data: brokerBookings } = useSupabaseQuery('bookings', { filter: user ? { broker_id: user.id } : undefined });
+  const { data: allProperties } = useSupabaseQuery('properties', { filter: { status: 'active' } });
+  const { data: commissions } = useSupabaseQuery('commissions', { filter: user ? { broker_id: user.id } : undefined });
   const [showBookingFlow, setShowBookingFlow] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const stats = mockDashboardStats.broker;
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -21,7 +28,11 @@ export function BrokerDashboard() {
     { id: 'properties', label: 'Browse Properties', icon: Search }
   ];
 
-  const brokerBookings = mockBookings.filter(b => b.broker_id === 'ECB3547001');
+  React.useEffect(() => {
+    if (user) {
+      statsService.getDashboardStats(user.id, user.role).then(setStats);
+    }
+  }, [user]);
   
   const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property);
@@ -39,7 +50,7 @@ export function BrokerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatsCard
           title="Total Bookings"
-          value={stats.total_bookings}
+          value={stats.total_bookings || brokerBookings?.length || 0}
           icon={Calendar}
           color="green"
           change={stats.monthly_growth}
@@ -69,7 +80,7 @@ export function BrokerDashboard() {
             </button>
           </div>
           <div className="space-y-4">
-            {brokerBookings.slice(0, 3).map((booking) => (
+            {(brokerBookings || []).slice(0, 3).map((booking) => (
               <BookingCard key={booking.id} booking={booking} userRole="broker" />
             ))}
           </div>
@@ -148,7 +159,7 @@ export function BrokerDashboard() {
       </div>
       
       <div className="space-y-4">
-        {brokerBookings.map((booking) => (
+        {(brokerBookings || []).map((booking) => (
           <BookingCard key={booking.id} booking={booking} showActions userRole="broker" />
         ))}
       </div>
@@ -163,7 +174,7 @@ export function BrokerDashboard() {
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Commission History</h3>
           <div className="space-y-4">
-            {mockCommissions.map((commission) => (
+            {(commissions || []).map((commission) => (
               <div key={commission.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div>
                   <p className="font-medium text-gray-900">Booking #{commission.booking_id.slice(0, 8)}</p>
@@ -171,7 +182,7 @@ export function BrokerDashboard() {
                   <p className="text-xs text-gray-500">{new Date(commission.created_at).toLocaleDateString()}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-green-600">+₹{commission.broker_commission.toLocaleString()}</p>
+                  <p className="font-semibold text-green-600">+₹{(commission.broker_commission || 0).toLocaleString()}</p>
                   <p className="text-xs text-gray-500">
                     <span className={`px-2 py-1 rounded-full ${
                       commission.status === 'paid' 
@@ -242,7 +253,7 @@ export function BrokerDashboard() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {mockProperties.map((property) => (
+        {(allProperties || []).map((property) => (
           <PropertyCard 
             key={property.id} 
             property={property} 
@@ -300,8 +311,8 @@ export function BrokerDashboard() {
       {showBookingFlow && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
           <BookingFlow
-            property={selectedProperty || mockProperties[0]}
-            properties={mockProperties}
+            property={selectedProperty || (allProperties || [])[0]}
+            properties={allProperties || []}
             onComplete={handleBookingComplete}
             onCancel={() => {
               setShowBookingFlow(false);

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Building2, Users, IndianRupee, TrendingUp, Settings, UserCheck, CreditCard, BarChart3 } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
-import { mockDashboardStats, mockBookings, mockProperties } from '../../data/mockData';
+import { useSupabaseQuery } from '../../hooks/useSupabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { statsService } from '../../services/supabaseService';
 import { BookingCard } from '../common/BookingCard';
 import { PropertyCard } from '../common/PropertyCard';
 import { UserManagement } from '../admin/UserManagement';
@@ -10,8 +12,12 @@ import { User } from '../../types';
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
-  const stats = mockDashboardStats.admin;
-  
+  const { user } = useAuth();
+  const [stats, setStats] = useState<any>({});
+
+  const { data: properties } = useSupabaseQuery('properties');
+  const { data: bookings } = useSupabaseQuery('bookings');
+
   // Mock users data
   const [users, setUsers] = useState<User[]>([
     {
@@ -64,8 +70,18 @@ export function AdminDashboard() {
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
-  const recentBookings = mockBookings.slice(0, 5);
-  const recentProperties = mockProperties.slice(0, 4);
+  React.useEffect(() => {
+    if (user) {
+      statsService.getDashboardStats(user.id, user.role).then(setStats);
+    }
+  }, [user]);
+
+  const recentBookings = bookings?.slice(0, 5) || [];
+  const recentProperties = properties?.slice(0, 4) || [];
+
+  // Convert Supabase data to component format
+  const convertedBookings = recentBookings.map(booking => ({ ...booking, property_title: booking.properties?.title || '' }));
+  const convertedProperties = recentProperties.map(property => ({ ...property, room_types: property.room_types || [] }));
   
   const handleUserUpdate = (updatedUser: User) => {
     setUsers(prev => prev.map(user => user.id === updatedUser.id ? updatedUser : user));
@@ -93,21 +109,21 @@ export function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Properties"
-          value={stats.total_properties || 0}
+          value={stats.total_properties || properties?.length || 0}
           icon={Building2}
           color="blue"
           change={stats.monthly_growth}
         />
         <StatsCard
           title="Total Bookings"
-          value={stats.total_bookings}
+          value={stats.total_bookings || bookings?.length || 0}
           icon={CreditCard}
           color="green"
           change={stats.monthly_growth}
         />
         <StatsCard
           title="Platform Revenue"
-          value={stats.total_revenue}
+          value={stats.total_revenue || 0}
           icon={IndianRupee}
           color="orange"
           change={stats.monthly_growth}
@@ -124,8 +140,8 @@ export function AdminDashboard() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Bookings</h3>
           <div className="space-y-4">
-            {recentBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} userRole="admin" />
+            {convertedBookings.map((booking) => (
+              <BookingCard key={booking.id} booking={booking as any} userRole="admin" />
             ))}
           </div>
         </div>
@@ -136,7 +152,7 @@ export function AdminDashboard() {
             <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
               <div>
                 <p className="text-sm text-gray-600">Platform Commission (This Month)</p>
-                <p className="text-2xl font-bold text-blue-600">₹{(stats.total_revenue * 0.1).toLocaleString()}</p>
+                <p className="text-2xl font-bold text-blue-600">₹{((stats.total_revenue || 0) * 0.1).toLocaleString()}</p>
               </div>
               <div className="text-blue-500">
                 <IndianRupee className="h-8 w-8" />
@@ -145,7 +161,7 @@ export function AdminDashboard() {
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div>
                 <p className="text-sm text-gray-600">Broker Commissions Paid</p>
-                <p className="text-2xl font-bold text-green-600">₹{(stats.total_revenue * 0.02).toLocaleString()}</p>
+                <p className="text-2xl font-bold text-green-600">₹{((stats.total_revenue || 0) * 0.02).toLocaleString()}</p>
               </div>
               <div className="text-green-500">
                 <Users className="h-8 w-8" />
@@ -175,8 +191,8 @@ export function AdminDashboard() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockProperties.map((property) => (
-          <PropertyCard key={property.id} property={property} showBookButton={false} />
+        {convertedProperties.map((property) => (
+          <PropertyCard key={property.id} property={property as any} showBookButton={false} />
         ))}
       </div>
     </div>
@@ -203,8 +219,8 @@ export function AdminDashboard() {
       </div>
       
       <div className="space-y-4">
-        {mockBookings.map((booking) => (
-          <BookingCard key={booking.id} booking={booking} showActions userRole="admin" />
+        {convertedBookings.map((booking) => (
+          <BookingCard key={booking.id} booking={booking as any} showActions userRole="admin" />
         ))}
       </div>
     </div>

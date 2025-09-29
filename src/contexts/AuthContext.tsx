@@ -57,10 +57,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (data) {
+        // Get email from auth user
+        const { data: authUser } = await auth.getUser();
+        
         setUser({
           id: data.id,
           name: data.name,
-          email: '', // Will be fetched from auth.user
+          email: authUser.user?.email || '',
           phone: data.phone || '',
           role: data.role,
           kyc_status: data.kyc_status,
