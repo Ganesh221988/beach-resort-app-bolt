@@ -89,8 +89,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to signup for demo
-    onSignup();
+    console.log('Search:', searchData);
+    // In a real app, this would trigger search functionality
   };
 
   return (
@@ -323,11 +323,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredDestinations.map((destination, index) => (
-              <div 
-                key={index} 
-                className="group cursor-pointer"
-                onClick={onSignup}
-              >
+              <div key={index} className="group cursor-pointer">
                 <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                   <img
                     src={destination.image}
@@ -357,24 +353,14 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProperties.map((property) => (
-              <div 
-                key={property.id} 
-                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
-                onClick={onSignup}
-              >
+              <div key={property.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
                 <div className="relative">
                   <img
                     src={property.image}
                     alt={property.name}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSignup();
-                    }}
-                    className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-                  >
+                  <button className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white transition-colors">
                     <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
                   </button>
                   <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
