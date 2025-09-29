@@ -9,6 +9,48 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      user_integrations: {
+        Row: {
+          id: string
+          user_id: string
+          integration_type: 'razorpay' | 'mailchimp' | 'instagram' | 'facebook'
+          integration_data: Json
+          is_enabled: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          integration_type: 'razorpay' | 'mailchimp' | 'instagram' | 'facebook'
+          integration_data: Json
+          is_enabled?: boolean
+        }
+        Update: {
+          integration_data?: Json
+          is_enabled?: boolean
+          updated_at?: string
+        }
+      }
+      admin_integrations: {
+        Row: {
+          id: string
+          integration_type: 'razorpay' | 'mailchimp'
+          integration_data: Json
+          is_enabled: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          integration_type: 'razorpay' | 'mailchimp'
+          integration_data: Json
+          is_enabled?: boolean
+        }
+        Update: {
+          integration_data?: Json
+          is_enabled?: boolean
+          updated_at?: string
+        }
+      }
       user_profiles: {
         Row: {
           id: string
@@ -272,6 +314,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      integration_type: 'razorpay' | 'mailchimp' | 'instagram' | 'facebook'
       user_role: 'admin' | 'owner' | 'broker' | 'customer'
       kyc_status: 'pending' | 'verified' | 'rejected'
       subscription_status: 'active' | 'inactive' | 'trial'

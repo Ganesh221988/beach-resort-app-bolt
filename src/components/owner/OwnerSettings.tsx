@@ -58,6 +58,56 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
     { id: 'support', label: 'Customer Support', icon: MessageCircle }
   ];
 
+  // Load integrations on component mount
+  React.useEffect(() => {
+    if (user) {
+      loadIntegrations();
+    }
+  }, [user]);
+
+  const loadIntegrations = async () => {
+    if (!user) return;
+    
+    try {
+      const data = await userIntegrationService.getUserIntegrations(user.id);
+      const integrationsMap = data.reduce((acc, integration) => {
+        acc[integration.integration_type] = integration;
+        return acc;
+      }, {} as any);
+      setIntegrations(integrationsMap);
+      
+      // Update local state with loaded data
+      if (integrationsMap.razorpay) {
+        setRazorpayConfig({
+          ...integrationsMap.razorpay.integration_data,
+          enabled: integrationsMap.razorpay.is_enabled
+        });
+      }
+      if (integrationsMap.mailchimp) {
+        setMailchimpConfig({
+          ...integrationsMap.mailchimp.integration_data,
+          enabled: integrationsMap.mailchimp.is_enabled
+        });
+      }
+      if (integrationsMap.instagram) {
+        setSocialMediaConfig(prev => ({
+          ...prev,
+          ...integrationsMap.instagram.integration_data,
+          instagram_enabled: integrationsMap.instagram.is_enabled
+        }));
+      }
+      if (integrationsMap.facebook) {
+        setSocialMediaConfig(prev => ({
+          ...prev,
+          ...integrationsMap.facebook.integration_data,
+          facebook_enabled: integrationsMap.facebook.is_enabled
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading integrations:', error);
+    }
+  };
+
   const handleSaveProfile = () => {
     console.log('Saving owner profile:', profileData);
     alert('Profile updated successfully!');
@@ -73,9 +123,46 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
     alert('Email marketing settings updated successfully!');
   };
 
-  const handleSaveSocialMedia = () => {
+  const handleSaveSocialMedia = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      // Save Instagram integration
+      if (socialMediaConfig.instagram_enabled) {
+        await userIntegrationService.upsertUserIntegration(
+          user.id,
+          'instagram',
+          {
+            username: socialMediaConfig.instagram_username,
+            access_token: socialMediaConfig.instagram_access_token
+          },
+          socialMediaConfig.instagram_enabled
+        );
+      }
+      
+      // Save Facebook integration
+      if (socialMediaConfig.facebook_enabled) {
+        await userIntegrationService.upsertUserIntegration(
+          user.id,
+          'facebook',
+          {
+            page_id: socialMediaConfig.facebook_page_id,
+            access_token: socialMediaConfig.facebook_access_token
+          },
+          socialMediaConfig.facebook_enabled
+        );
+      }
+      
+      await loadIntegrations();
+      alert('Social media integration updated successfully!');
+    } catch (error) {
+      console.error('Error saving social media config:', error);
+      alert('Error saving social media settings. Please try again.');
+    } finally {
+      setLoading(false);
+    }
     console.log('Saving social media config:', socialMediaConfig);
-    alert('Social media integration updated successfully!');
   };
 
   const handleSubmitSupport = () => {

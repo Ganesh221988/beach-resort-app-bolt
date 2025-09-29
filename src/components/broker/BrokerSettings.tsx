@@ -59,9 +59,30 @@ export function BrokerSettings({ onClose }: BrokerSettingsProps) {
     alert('Payment gateway settings updated successfully!');
   };
 
-  const handleSaveMailchimp = () => {
+  const handleSaveMailchimp = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      await userIntegrationService.upsertUserIntegration(
+        user.id,
+        'mailchimp',
+        {
+          api_key: mailchimpConfig.api_key,
+          server_prefix: mailchimpConfig.server_prefix,
+          list_id: mailchimpConfig.list_id
+        },
+        mailchimpConfig.enabled
+      );
+      await loadIntegrations();
+      alert('Email marketing settings updated successfully!');
+    } catch (error) {
+      console.error('Error saving Mailchimp config:', error);
+      alert('Error saving email marketing settings. Please try again.');
+    } finally {
+      setLoading(false);
+    }
     console.log('Saving Mailchimp config:', mailchimpConfig);
-    alert('Email marketing settings updated successfully!');
   };
 
   const handleSubmitSupport = () => {

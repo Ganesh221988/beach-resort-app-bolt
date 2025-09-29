@@ -19,6 +19,9 @@ interface SubscriptionPlan {
 
 export function AdminSettings({ onClose }: AdminSettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
+  const { user } = useAuth();
+  const [integrations, setIntegrations] = useState<any>({});
+  const [loading, setLoading] = useState(false);
   const [profileData, setProfileData] = useState({
     company_name: 'ECR Beach Resorts',
     admin_name: 'Admin User',
@@ -65,6 +68,38 @@ export function AdminSettings({ onClose }: AdminSettingsProps) {
     }
   ]);
 
+  // Load integrations on component mount
+  React.useEffect(() => {
+    loadIntegrations();
+  }, []);
+
+  const loadIntegrations = async () => {
+    try {
+      const data = await adminIntegrationService.getAdminIntegrations();
+      const integrationsMap = data.reduce((acc, integration) => {
+        acc[integration.integration_type] = integration;
+        return acc;
+      }, {} as any);
+      setIntegrations(integrationsMap);
+      
+      // Update local state with loaded data
+      if (integrationsMap.razorpay) {
+        setRazorpayConfig({
+          ...integrationsMap.razorpay.integration_data,
+          enabled: integrationsMap.razorpay.is_enabled
+        });
+      }
+      if (integrationsMap.mailchimp) {
+        setMailchimpConfig({
+          ...integrationsMap.mailchimp.integration_data,
+          enabled: integrationsMap.mailchimp.is_enabled
+        });
+      }
+    } catch (error) {
+      console.error('Error loading integrations:', error);
+    }
+  };
+
   const tabs = [
     { id: 'profile', label: 'Update Profile', icon: Users },
     { id: 'logo', label: 'Change Logo', icon: Upload },
@@ -88,9 +123,27 @@ export function AdminSettings({ onClose }: AdminSettingsProps) {
     alert('Razorpay integration updated successfully!');
   };
 
-  const handleSaveMailchimp = () => {
+  const handleSaveMailchimp = async () => {
+    setLoading(true);
+    try {
+      await adminIntegrationService.updateAdminIntegration(
+        'mailchimp',
+        {
+          api_key: mailchimpConfig.api_key,
+          server_prefix: mailchimpConfig.server_prefix,
+          list_id: mailchimpConfig.list_id
+        },
+        mailchimpConfig.enabled
+      );
+      await loadIntegrations();
+      alert('Mailchimp integration updated successfully!');
+    } catch (error) {
+      console.error('Error saving Mailchimp config:', error);
+      alert('Error saving Mailchimp configuration. Please try again.');
+    } finally {
+      setLoading(false);
+    }
     console.log('Saving Mailchimp config:', mailchimpConfig);
-    alert('Mailchimp integration updated successfully!');
   };
 
   const handleSaveSubscriptions = () => {
