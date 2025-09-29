@@ -89,8 +89,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Search:', searchData);
-    // In a real app, this would trigger search functionality
+    // Redirect to signup for demo
+    onSignup();
   };
 
   return (
@@ -501,6 +501,64 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
         </div>
       </section>
 
+      {/* About Section */}
+      <section id="about" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">About ECR Beach Resorts</h2>
+              <p className="text-lg text-gray-600 mb-6">
+                We are India's premier booking platform for luxury accommodations and event venues. 
+                With over 500+ verified properties across the country, we make it easy to find and 
+                book your perfect getaway.
+              </p>
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-orange-600 mb-2">500+</h3>
+                  <p className="text-gray-600">Verified Properties</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-orange-600 mb-2">50,000+</h3>
+                  <p className="text-gray-600">Happy Customers</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-orange-600 mb-2">25+</h3>
+                  <p className="text-gray-600">Cities Covered</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-orange-600 mb-2">4.8★</h3>
+                  <p className="text-gray-600">Average Rating</p>
+                </div>
+              </div>
+              <button 
+                onClick={onSignup}
+                className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
+              >
+                Join Our Community
+              </button>
+            </div>
+            <div className="relative">
+              <img
+                src="https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="About ECR Beach Resorts"
+                className="rounded-2xl shadow-2xl"
+              />
+              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold">ECR</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Trusted Platform</p>
+                    <p className="text-sm text-gray-600">Since 2020</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-orange-500 to-red-500">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -528,8 +586,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer id="contact" className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Get in Touch</h2>
+            <p className="text-gray-300">We're here to help you plan your perfect getaway</p>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
@@ -549,7 +612,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             <div>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#destinations" className="hover:text-white">Destinations</a></li>
+                <li><a href="#events" className="hover:text-white">Events</a></li>
                 <li><a href="#properties" className="hover:text-white">Properties</a></li>
                 <li><a href="#about" className="hover:text-white">About Us</a></li>
                 <li><a href="#contact" className="hover:text-white">Contact</a></li>
@@ -559,10 +622,10 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             <div>
               <h4 className="text-lg font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Booking Policy</a></li>
-                <li><a href="#" className="hover:text-white">Cancellation</a></li>
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                <li><button onClick={onSignup} className="hover:text-white">Help Center</button></li>
+                <li><button onClick={onSignup} className="hover:text-white">Booking Policy</button></li>
+                <li><button onClick={onSignup} className="hover:text-white">Cancellation</button></li>
+                <li><button onClick={onSignup} className="hover:text-white">Privacy Policy</button></li>
               </ul>
             </div>
 
@@ -572,6 +635,14 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <p>📧 info@ecrbeachresorts.com</p>
                 <p>📞 +91 98765 43210</p>
                 <p>📍 Mumbai, Maharashtra, India</p>
+                <div className="mt-4">
+                  <button 
+                    onClick={onSignup}
+                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+                  >
+                    Contact Us
+                  </button>
+                </div>
               </div>
             </div>
           </div>
