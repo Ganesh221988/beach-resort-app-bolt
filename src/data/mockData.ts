@@ -27,6 +27,13 @@ export const mockProperties: Property[] = [
       'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg',
       'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg'
     ],
+    video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+    booking_mode: 'both',
+    booking_types: 'both',
+    full_villa_rates: {
+      daily_rate: 25000,
+      hourly_rate: 3500
+    },
     cancellation_policy: 'Free cancellation up to 24 hours before check-in',
     check_in_time: '15:00',
     check_out_time: '11:00',
@@ -69,6 +76,13 @@ export const mockProperties: Property[] = [
       'https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg',
       'https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg'
     ],
+    video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4',
+    booking_mode: 'rooms_only',
+    booking_types: 'daily',
+    full_villa_rates: {
+      daily_rate: 18000,
+      hourly_rate: 2500
+    },
     cancellation_policy: 'Free cancellation up to 48 hours before check-in',
     check_in_time: '14:00',
     check_out_time: '12:00',

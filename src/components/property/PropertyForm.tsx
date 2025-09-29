@@ -17,6 +17,13 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
     state: property?.state || '',
     amenities: property?.amenities || [],
     images: property?.images || [],
+    video_url: property?.video_url || '',
+    booking_mode: property?.booking_mode || 'both',
+    booking_types: property?.booking_types || 'both',
+    full_villa_rates: property?.full_villa_rates || {
+      daily_rate: 0,
+      hourly_rate: 0
+    },
     cancellation_policy: property?.cancellation_policy || 'Free cancellation up to 24 hours before check-in',
     check_in_time: property?.check_in_time || '15:00',
     check_out_time: property?.check_out_time || '11:00',
@@ -316,10 +323,120 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
             </div>
           </div>
 
-          {/* Room Types */}
+          {/* Booking Configuration */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Booking Configuration</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Booking Mode */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Booking Mode *
+                </label>
+                <select
+                  value={formData.booking_mode}
+                  onChange={(e) => setFormData(prev => ({ ...prev, booking_mode: e.target.value as any }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  required
+                >
+                  <option value="full_villa">Full Villa Only</option>
+                  <option value="rooms_only">Rooms Only</option>
+                  <option value="both">Both (Full Villa & Rooms)</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Choose how guests can book your property
+                </p>
+              </div>
+              
+              {/* Booking Types */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Booking Types *
+                </label>
+                <select
+                  value={formData.booking_types}
+                  onChange={(e) => setFormData(prev => ({ ...prev, booking_types: e.target.value as any }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  required
+                >
+                  <option value="daily">Daily Only</option>
+                  <option value="hourly">Hourly Only</option>
+                  <option value="both">Both (Daily & Hourly)</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Select available booking durations
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Rate Configuration */}
+          {(formData.booking_mode === 'full_villa' || formData.booking_mode === 'both') && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Full Villa Rates</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {(formData.booking_types === 'daily' || formData.booking_types === 'both') && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Daily Rate (₹) *
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.full_villa_rates.daily_rate}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        full_villa_rates: {
+                          ...prev.full_villa_rates,
+                          daily_rate: parseInt(e.target.value) || 0
+                        }
+                      }))}
+                      min="0"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      placeholder="Enter daily rate for full villa"
+                      required
+                    />
+                  </div>
+                )}
+                
+                {(formData.booking_types === 'hourly' || formData.booking_types === 'both') && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Hourly Rate (₹) *
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.full_villa_rates.hourly_rate}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        full_villa_rates: {
+                          ...prev.full_villa_rates,
+                          hourly_rate: parseInt(e.target.value) || 0
+                        }
+                      }))}
+                      min="0"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      placeholder="Enter hourly rate for full villa"
+                      required
+                    />
+                  </div>
+                )}
+              </div>
+              
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  <strong>Full Villa Booking:</strong> Guests book the entire property exclusively. 
+                  This rate applies when the whole villa/property is reserved.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Room Types */}
+          {(formData.booking_mode === 'rooms_only' || formData.booking_mode === 'both') && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Room Types</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Room Types & Rates</h2>
               <button
                 type="button"
                 onClick={addRoomType}
@@ -371,17 +488,19 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Price per Night (₹)
+                        {(formData.booking_types === 'daily' || formData.booking_types === 'both') ? 'Price per Night (₹)' : 'Daily Rate (₹)'}
                       </label>
                       <input
                         type="number"
                         value={room.price_per_night}
                         onChange={(e) => updateRoomType(index, { price_per_night: parseInt(e.target.value) })}
+                        disabled={formData.booking_types === 'hourly'}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       />
                     </div>
                     
-                    <div>
+                    {(formData.booking_types === 'hourly' || formData.booking_types === 'both') && (
+                      <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Price per Hour (₹)
                       </label>
@@ -391,12 +510,33 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
                         onChange={(e) => updateRoomType(index, { price_per_hour: parseInt(e.target.value) })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       />
+                      </div>
+                    )}
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Extra Person Charge (₹)
+                      </label>
+                      <input
+                        type="number"
+                        value={room.extra_person_charge}
+                        onChange={(e) => updateRoomType(index, { extra_person_charge: parseInt(e.target.value) })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+            
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-700">
+                <strong>Room-wise Booking:</strong> Guests can book individual rooms. 
+                Each room type can have different rates and capacities.
+              </p>
+            </div>
           </div>
+          )}
 
           {/* Policies */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">

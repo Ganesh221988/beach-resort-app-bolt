@@ -43,6 +43,13 @@ export interface Property {
   };
   amenities: string[];
   images: string[];
+  video_url?: string;
+  booking_mode: 'full_villa' | 'rooms_only' | 'both';
+  booking_types: 'daily' | 'hourly' | 'both';
+  full_villa_rates?: {
+    daily_rate?: number;
+    hourly_rate?: number;
+  };
   cancellation_policy: string;
   check_in_time: string;
   check_out_time: string;
