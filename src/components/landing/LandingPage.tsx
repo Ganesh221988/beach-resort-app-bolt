@@ -89,8 +89,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Search:', searchData);
-    // In a real app, this would trigger search functionality
+    // Redirect to signup for demo
+    onSignup();
   };
 
   return (
@@ -323,7 +323,11 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredDestinations.map((destination, index) => (
-              <div key={index} className="group cursor-pointer">
+              <div 
+                key={index} 
+                className="group cursor-pointer"
+                onClick={onSignup}
+              >
                 <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                   <img
                     src={destination.image}
@@ -353,14 +357,24 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProperties.map((property) => (
-              <div key={property.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+              <div 
+                key={property.id} 
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+                onClick={onSignup}
+              >
                 <div className="relative">
                   <img
                     src={property.image}
                     alt={property.name}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <button className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white transition-colors">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSignup();
+                    }}
+                    className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
+                  >
                     <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
                   </button>
                   <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
@@ -586,8 +600,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer id="contact" className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Get in Touch</h2>
+            <p className="text-gray-300">We're here to help you plan your perfect getaway</p>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
@@ -607,7 +626,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             <div>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#destinations" className="hover:text-white">Destinations</a></li>
+                <li><a href="#events" className="hover:text-white">Events</a></li>
                 <li><a href="#properties" className="hover:text-white">Properties</a></li>
                 <li><a href="#about" className="hover:text-white">About Us</a></li>
                 <li><a href="#contact" className="hover:text-white">Contact</a></li>
@@ -617,10 +636,10 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             <div>
               <h4 className="text-lg font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Booking Policy</a></li>
-                <li><a href="#" className="hover:text-white">Cancellation</a></li>
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                <li><button onClick={onSignup} className="hover:text-white">Help Center</button></li>
+                <li><button onClick={onSignup} className="hover:text-white">Booking Policy</button></li>
+                <li><button onClick={onSignup} className="hover:text-white">Cancellation</button></li>
+                <li><button onClick={onSignup} className="hover:text-white">Privacy Policy</button></li>
               </ul>
             </div>
 
@@ -630,6 +649,14 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <p>📧 info@ecrbeachresorts.com</p>
                 <p>📞 +91 98765 43210</p>
                 <p>📍 Mumbai, Maharashtra, India</p>
+                <div className="mt-4">
+                  <button 
+                    onClick={onSignup}
+                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+                  >
+                    Contact Us
+                  </button>
+                </div>
               </div>
             </div>
           </div>
