@@ -55,7 +55,7 @@ export function CustomerDashboard() {
               <MapPin className="h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Where do you want to go?"
+                placeholder="Search properties or events..."
                 className="flex-1 text-gray-900 placeholder-gray-500 focus:outline-none"
               />
             </div>
