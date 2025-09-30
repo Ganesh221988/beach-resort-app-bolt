@@ -3,7 +3,9 @@ import { Search, MapPin, Calendar, Users, Star, ChevronRight, ChevronDown, Menu,
 import { mockEvents } from '../../data/mockData';
 import { useAuth } from '../../contexts/AuthContext';
 import { PropertyPage } from '../property/PropertyPage';
+import { SearchResultsPage } from '../search/SearchResultsPage';
 import { Property } from '../../types';
+import { useSupabaseQuery } from '../../hooks/useSupabase';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -15,6 +17,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEventsOpen, setIsEventsOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const { data: allProperties } = useSupabaseQuery('properties', { filter: { status: 'active' } });
   const [searchData, setSearchData] = useState({
     selectedEvent: '',
     checkIn: '',
@@ -95,13 +99,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Check if user is logged in
-    if (!user) {
-      onLogin();
-      return;
-    }
-    // If logged in, proceed with search (would normally navigate to search results)
-    console.log('Searching with:', searchData);
+    // Show search results page (no authentication required for search)
+    setShowSearchResults(true);
   };
 
   const handleFavoriteClick = (propertyId: number, e: React.MouseEvent) => {
@@ -793,29 +792,6 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
           </div>
         </div>
       </footer>
-
-      {/* Property Details Modal */}
-      {selectedProperty && (
-        <PropertyPage
-          property={selectedProperty}
-          onBack={closePropertyDetails}
-          onBookNow={() => {
-            if (!user) {
-              onLogin();
-              return;
-            }
-            
-            if (user.role !== 'customer' && user.role !== 'broker') {
-              alert('Only customers and brokers can make bookings.');
-              return;
-            }
-            
-            // TODO: Implement booking flow
-            alert('Booking flow will be implemented here');
-          }}
-          onLogin={onLogin}
-        />
-      )}
     </div>
   );
 }
