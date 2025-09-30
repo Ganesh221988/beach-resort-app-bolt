@@ -403,18 +403,6 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
-                    <div className="relative">
-                      <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="number"
-                        value={searchData.adults}
-                        onChange={(e) => setSearchData(prev => ({ ...prev, adults: parseInt(e.target.value) || 1 }))}
-                        min="1"
-                        max="20"
-                        className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      />
-                    </div>
-                  </div>
                   <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
                     <input
@@ -433,7 +421,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <button
                   type="submit"
                   className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
-                >
+                  className="w-full mt-3 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   <Search className="h-5 w-5" />
                   <span>Search Properties</span>
                 </button>
@@ -456,7 +444,11 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
               <div 
                 key={index} 
                 className="group cursor-pointer"
-                onClick={() => handleEventVenueSearch(event.name)}
+                onClick={() => {
+                  // Show event-related properties without authentication
+                  console.log(`Showing venues for ${event.name}`);
+                  // TODO: Implement event-based property filtering
+                }}
               >
                 <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                   <img
