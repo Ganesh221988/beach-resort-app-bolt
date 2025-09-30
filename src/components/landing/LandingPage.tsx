@@ -403,17 +403,14 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
-                    <div className="relative">
-                      <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="number"
-                        value={searchData.adults}
-                        onChange={(e) => setSearchData(prev => ({ ...prev, adults: parseInt(e.target.value) || 1 }))}
-                        min="1"
-                        max="20"
-                        className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      />
-                    </div>
+                    <input
+                      type="number"
+                      value={searchData.adults}
+                      onChange={(e) => setSearchData(prev => ({ ...prev, adults: parseInt(e.target.value) || 1 }))}
+                      min="1"
+                      max="10"
+                      className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    />
                   </div>
                   <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
@@ -835,26 +832,6 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
           </div>
         </div>
       </footer>
-
-      {/* Property Page Modal */}
-      {selectedProperty && (
-        <PropertyPage
-          property={selectedProperty}
-          onBack={closePropertyDetails}
-          onBookNow={handleBookNow}
-          onLogin={onLogin}
-        />
-      )}
-
-      {/* Search Results Page */}
-      {showSearchResults && (
-        <SearchResultsPage
-          searchQuery={searchData}
-          properties={allProperties || []}
-          onBack={() => setShowSearchResults(false)}
-          onLogin={onLogin}
-        />
-      )}
     </div>
   );
 }
