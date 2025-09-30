@@ -489,10 +489,6 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                     src={property.image}
                     alt={property.name}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
-                    onClick={() => {
-                      const fullProperty = convertFeaturedToFullProperty(property);
-                      setSelectedProperty(fullProperty);
-                    }}
                   />
                   <button 
                     onClick={(e) => {
@@ -509,11 +505,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 </div>
 
                 <div 
-                  className="p-4 cursor-pointer"
-                  onClick={() => {
-                    const fullProperty = convertFeaturedToFullProperty(property);
-                    setSelectedProperty(fullProperty);
-                  }}
+                  className="p-4"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-gray-900 truncate">{property.name}</h3>
@@ -550,6 +542,16 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                       {property.reviews} reviews
                     </div>
                   </div>
+                  
+                  <button 
+                    onClick={() => {
+                      const fullProperty = convertFeaturedToFullProperty(property);
+                      setSelectedProperty(fullProperty);
+                    }}
+                    className="w-full mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+                  >
+                    View Details
+                  </button>
                 </div>
                 
                 <div className="px-4 pb-4">
