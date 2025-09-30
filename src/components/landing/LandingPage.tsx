@@ -27,6 +27,11 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
     children: 0
   });
 
+  // Define closePropertyDetails function before it's used
+  const closePropertyDetails = () => {
+    setSelectedProperty(null);
+  };
+
   // Handle event venue search
   const handleEventVenueSearch = (eventName: string) => {
     setSearchData(prev => ({ ...prev, selectedEvent: eventName }));
@@ -224,10 +229,6 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
       status: 'active' as const
     };
     return fullProperty;
-  };
-
-  const closePropertyDetails = () => {
-    setSelectedProperty(null);
   };
 
   return (
