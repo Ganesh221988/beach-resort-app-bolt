@@ -456,11 +456,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
               <div 
                 key={index} 
                 className="group cursor-pointer"
-                onClick={() => {
-                  // Show event-related properties without authentication
-                  console.log(`Showing venues for ${event.name}`);
-                  // TODO: Implement event-based property filtering
-                }}
+                onClick={() => handleEventVenueSearch(event.name)}
               >
                 <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                   <img
