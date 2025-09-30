@@ -17,9 +17,4 @@ export function OwnerDashboard() {
     { id: 'earnings', label: 'Earnings', icon: IndianRupee },
     { id: 'marketing', label: 'Social Media Marketing', icon: Camera }
   ];
-
-        {activeTab === 'bookings' && renderBookings()}
-        {activeTab === 'calendar' && renderCalendar()}
-        {activeTab === 'earnings' && renderEarnings()}
-        {activeTab === 'marketing' && renderMarketing()}
-      </div>
+}
