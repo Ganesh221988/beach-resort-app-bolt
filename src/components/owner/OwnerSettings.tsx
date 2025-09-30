@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { X, User, CreditCard, Mail, Instagram, Facebook, MessageCircle, Save, Upload } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { userIntegrationService } from '../../services/integrationService';
 
 interface OwnerSettingsProps {
   onClose: () => void;

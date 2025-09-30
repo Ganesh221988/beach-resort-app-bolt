@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { X, Upload, Save, CreditCard, Mail, DollarSign, Users, Crown, Building2 } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { adminIntegrationService } from '../../services/integrationService';
 
 interface AdminSettingsProps {
   onClose: () => void;

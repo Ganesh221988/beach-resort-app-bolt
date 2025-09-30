@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Users, Wifi, Car, Star, IndianRupee } from 'lucide-react';
 import { Property } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface PropertyCardProps {
   property: Property;

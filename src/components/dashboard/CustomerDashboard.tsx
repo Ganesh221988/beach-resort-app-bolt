@@ -18,6 +18,7 @@ export function CustomerDashboard() {
   const { data: allProperties } = useSupabaseQuery('properties', { filter: { status: 'active' } });
   const [showBookingFlow, setShowBookingFlow] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [favoriteProperties, setFavoriteProperties] = useState<Property[]>([]);
 
   const tabs = [
     { id: 'discover', label: 'Discover', icon: Search },
@@ -40,6 +41,10 @@ export function CustomerDashboard() {
     console.log('Creating customer booking:', bookingData);
     setShowBookingFlow(false);
     setSelectedProperty(null);
+  };
+
+  const handleRemoveFromFavorites = (propertyId: string) => {
+    setFavoriteProperties(prev => prev.filter(p => p.id !== propertyId));
   };
 
   const renderDiscover = () => (

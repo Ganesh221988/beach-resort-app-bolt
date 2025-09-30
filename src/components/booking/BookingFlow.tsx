@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, Users, IndianRupee, ArrowLeft, ArrowRight, CreditCard } from 'lucide-react';
 import { Property, RoomType, Booking } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface BookingFlowProps {
   property: Property;

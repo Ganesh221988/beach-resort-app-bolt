@@ -4,6 +4,7 @@ import { Property } from '../../types';
 import { PropertyCard } from '../common/PropertyCard';
 import { PropertyPage } from '../property/PropertyPage';
 import { useAuth } from '../../contexts/AuthContext';
+import { mockEvents } from '../../data/mockData';
 
 interface SearchResultsPageProps {
   searchQuery: {

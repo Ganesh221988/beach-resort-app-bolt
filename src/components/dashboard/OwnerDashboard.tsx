@@ -11,6 +11,7 @@ import { PropertyForm } from '../property/PropertyForm';
 import { PropertyCalendar } from '../calendar/PropertyCalendar';
 import { BookingFlow } from '../booking/BookingFlow';
 import { Property, Booking } from '../../types';
+import { SocialMediaMarketing } from './SocialMediaMarketing';
 
 export function OwnerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -28,6 +29,7 @@ export function OwnerDashboard() {
   const [cityFilter, setCityFilter] = useState('all');
   const [showOtherBookingFlow, setShowOtherBookingFlow] = useState(false);
   const [selectedOtherProperty, setSelectedOtherProperty] = useState<Property | null>(null);
+  const [showMarketingModal, setShowMarketingModal] = useState(false);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -35,7 +37,8 @@ export function OwnerDashboard() {
     { id: 'bookings', label: 'Bookings', icon: Calendar },
     { id: 'calendar', label: 'Calendar', icon: CalendarDays },
     { id: 'earnings', label: 'Earnings', icon: IndianRupee },
-    { id: 'other-bookings', label: 'Other Property Bookings', icon: Search }
+    { id: 'other-bookings', label: 'Other Property Bookings', icon: Search },
+    { id: 'marketing', label: 'Social Media Marketing', icon: Camera }
   ];
 
   
@@ -439,6 +442,34 @@ export function OwnerDashboard() {
         {activeTab === 'bookings' && renderBookings()}
         {activeTab === 'calendar' && renderCalendar()}
         {activeTab === 'earnings' && renderEarnings()}
+        {activeTab === 'other-bookings' && renderOtherBookings()}
+        {activeTab === 'marketing' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Social Media Marketing</h2>
+              <button
+                onClick={() => setShowMarketingModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+              >
+                <Camera className="h-4 w-4" />
+                <span>Setup Marketing</span>
+              </button>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+              <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Automated Social Media Marketing</h3>
+              <p className="text-gray-600 mb-6">
+                Set up automated posting to Instagram and Facebook to promote your properties.
+              </p>
+              <button
+                onClick={() => setShowMarketingModal(true)}
+                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+              >
+                Get Started
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Property Form Modal */}
@@ -483,6 +514,68 @@ export function OwnerDashboard() {
           />
         </div>
       )}
+      
+      {/* Social Media Marketing Modal */}
+      {showMarketingModal && (
+        <SocialMediaMarketing
+          properties={ownerProperties || []}
+          onClose={() => setShowMarketingModal(false)}
+        />
+      )}
+    </div>
+  );
+
+  const renderOtherBookings = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">Book Other Properties (As Broker)</h2>
+        <div className="flex items-center space-x-3">
+          <input
+            type="text"
+            placeholder="Search properties..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+          <select
+            value={cityFilter}
+            onChange={(e) => setCityFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {availableCities.map(city => (
+              <option key={city} value={city}>
+                {city === 'all' ? 'All Cities' : city}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm text-blue-700">
+          <strong>Broker Mode:</strong> You can book other properties on behalf of customers and earn commission.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredOtherProperties.map((property) => (
+          <PropertyCard 
+            key={property.id} 
+            property={property} 
+            onSelect={handleOtherPropertySelect}
+          />
+        ))}
+      </div>
+      
+      {/* Broker Bookings Made */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">My Broker Bookings</h3>
+        <div className="space-y-4">
+          {ownerBrokerBookings.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} userRole="broker" />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

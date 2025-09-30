@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { X, User, CreditCard, Mail, MessageCircle, Save } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { userIntegrationService } from '../../services/integrationService';
 
 interface BrokerSettingsProps {
   onClose: () => void;
