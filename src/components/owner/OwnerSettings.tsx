@@ -197,6 +197,30 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
         </div>
         
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Contact Person Name</label>
+          <input
+            type="text"
+            value={profileData.contact_person_name || ''}
+            onChange={(e) => setProfileData(prev => ({ ...prev, contact_person_name: e.target.value }))}
+            placeholder="Name for marketing posts"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+          <p className="text-xs text-gray-500 mt-1">This name will appear in automated marketing posts</p>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number for Marketing</label>
+          <input
+            type="tel"
+            value={profileData.marketing_phone || ''}
+            onChange={(e) => setProfileData(prev => ({ ...prev, marketing_phone: e.target.value }))}
+            placeholder="Phone number for marketing posts"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+          <p className="text-xs text-gray-500 mt-1">This number will be included in social media posts</p>
+        </div>
+        
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <input
             type="email"

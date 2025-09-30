@@ -229,6 +229,12 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Property Images</h2>
             
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-700">
+                <strong>Marketing Tip:</strong> Add up to 10 high-quality images. These will be used for automated social media marketing posts.
+              </p>
+            </div>
+            
             <div className="flex items-center space-x-3 mb-4">
               <input
                 type="url"
@@ -240,10 +246,18 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
               <button
                 type="button"
                 onClick={addImage}
-                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                disabled={formData.images.length >= 10}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
               >
                 <Plus className="h-4 w-4" />
               </button>
+            </div>
+            
+            <div className="mb-4 text-sm text-gray-600">
+              {formData.images.length}/10 images added
+              {formData.images.length >= 10 && (
+                <span className="text-orange-600 ml-2">(Maximum reached)</span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
