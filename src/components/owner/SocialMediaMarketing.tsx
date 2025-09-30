@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Instagram, Facebook, Calendar, Image, Settings, Play, Pause, Eye, Edit2, Save, X } from 'lucide-react';
+import { Instagram, Facebook, Calendar, Image, Settings, Play, Pause, Eye, CreditCard as Edit2, Save, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userIntegrationService } from '../../services/integrationService';
 import { Property } from '../../types';
@@ -760,6 +760,7 @@ ${property.amenities.slice(0, 5).map(amenity => `• ${amenity}`).join('\n')}
         </div>
       </div>
     );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
