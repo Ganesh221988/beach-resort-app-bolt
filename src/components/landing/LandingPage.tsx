@@ -139,7 +139,54 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
   };
 
   const handlePropertyClick = (property: any) => {
-    setSelectedProperty(property);
+    // Convert featured property to full Property object
+    const fullProperty: Property = {
+      id: property.id.toString(),
+      owner_id: 'demo-owner',
+      title: property.name,
+      description: `Experience luxury and comfort at ${property.name}. This beautiful property offers stunning views and world-class amenities for an unforgettable stay. Perfect for ${property.name.includes('Villa') ? 'families and groups' : property.name.includes('Resort') ? 'romantic getaways' : 'business and leisure travelers'}.`,
+      address: `123 Main Street, ${property.location}`,
+      city: property.location.split(',')[0].trim(),
+      state: property.location.split(',')[1]?.trim() || 'India',
+      geo: { lat: 0, lng: 0 },
+      amenities: property.amenities,
+      images: [property.image, property.image, property.image], // Demo: use same image multiple times
+      video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+      booking_mode: 'both' as const,
+      booking_types: 'both' as const,
+      full_villa_rates: {
+        daily_rate: property.price * 3, // Assume villa rate is 3x room rate
+        hourly_rate: Math.round(property.price / 8)
+      },
+      policies: {},
+      check_in_time: '15:00',
+      check_out_time: '11:00',
+      room_types: [
+        {
+          id: '1',
+          property_id: property.id.toString(),
+          title: 'Deluxe Room',
+          capacity: 2,
+          price_per_night: property.price,
+          price_per_hour: Math.round(property.price / 8),
+          extra_person_charge: 500,
+          amenities: ['King Bed', 'Private Bathroom', 'AC', 'WiFi']
+        },
+        {
+          id: '2',
+          property_id: property.id.toString(),
+          title: 'Standard Room',
+          capacity: 2,
+          price_per_night: Math.round(property.price * 0.8),
+          price_per_hour: Math.round(property.price * 0.8 / 8),
+          extra_person_charge: 300,
+          amenities: ['Queen Bed', 'Private Bathroom', 'AC']
+        }
+      ],
+      created_at: '2024-01-01T00:00:00Z',
+      status: 'active' as const
+    };
+    setSelectedProperty(fullProperty);
   };
 
   const closePropertyDetails = () => {
@@ -749,98 +796,25 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
       {/* Property Details Modal */}
       {selectedProperty && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">{selectedProperty.name}</h2>
-              <button
-                onClick={closePropertyDetails}
-                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
+        <PropertyPage
+          property={selectedProperty}
+          onBack={closePropertyDetails}
+          onBookNow={() => {
+            if (!user) {
+              onLogin();
+              return;
+            }
             
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Property Images */}
-                <div>
-                  <img
-                    src={selectedProperty.image}
-                    alt={selectedProperty.name}
-                    className="w-full h-64 object-cover rounded-xl mb-4"
-                  />
-                  <div className="grid grid-cols-3 gap-2">
-                    {/* Additional images would go here */}
-                    <img src={selectedProperty.image} alt="Gallery" className="w-full h-20 object-cover rounded-lg" />
-                    <img src={selectedProperty.image} alt="Gallery" className="w-full h-20 object-cover rounded-lg" />
-                    <img src={selectedProperty.image} alt="Gallery" className="w-full h-20 object-cover rounded-lg" />
-                  </div>
-                </div>
-
-                {/* Property Details */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-4">
-                    <MapPin className="h-5 w-5 text-gray-500" />
-                    <span className="text-gray-600">{selectedProperty.location}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                      <span className="font-semibold">{selectedProperty.rating}</span>
-                      <span className="text-gray-600">({selectedProperty.reviews} reviews)</span>
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Amenities</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedProperty.amenities.map((amenity: string, idx: number) => (
-                        <span key={idx} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                          {amenity}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                    </div>
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-                    <p className="text-gray-600">
-                      Experience luxury and comfort at {selectedProperty.name}. This beautiful property offers 
-                      stunning views and world-class amenities for an unforgettable stay. Perfect for 
-                      {selectedProperty.name.includes('Villa') ? ' families and groups' : 
-                       selectedProperty.name.includes('Resort') ? ' romantic getaways' : 
-                       ' business and leisure travelers'}.
-                    </p>
-                  </div>
-                  </div>
-                  <div className="border-t border-gray-200 pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <span className="text-3xl font-bold text-gray-900">₹{selectedProperty.price.toLocaleString()}</span>
-                        <span className="text-gray-600"> /night</span>
-                      </div>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleFavoriteClick(selectedProperty.id, e);
-                        }}
-                        className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-                      >
-                        <Heart className="h-5 w-5 text-gray-600 hover:text-red-500" />
-                      </button>
-                    </div>
-                    
-                    <button 
-                      onClick={() => handleBookNow(selectedProperty.id)}
-                      className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      Book Now
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            if (user.role !== 'customer' && user.role !== 'broker') {
+              alert('Only customers and brokers can make bookings.');
+              return;
+            }
+            
+            // TODO: Implement booking flow
+            alert('Booking flow will be implemented here');
+          }}
+          onLogin={onLogin}
+        />
       )}
     </div>
   );
