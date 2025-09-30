@@ -28,13 +28,6 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
     }
   };
 
-  const demoAccounts = [
-    { role: 'Admin', email: 'admin@ecrbeachresorts.com', color: 'bg-purple-100 text-purple-700 border-purple-200' },
-    { role: 'Owner', email: 'owner@ecrbeachresorts.com', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-    { role: 'Broker', email: 'broker@ecrbeachresorts.com', color: 'bg-green-100 text-green-700 border-green-200' },
-    { role: 'Customer', email: 'customer@ecrbeachresorts.com', color: 'bg-orange-100 text-orange-700 border-orange-200' }
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -55,21 +48,6 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
             <p className="text-gray-600 text-lg">
               Sign in to access your personalized dashboard and manage your bookings, properties, and more.
             </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {demoAccounts.map((account) => (
-              <button
-                key={account.role}
-                onClick={() => {
-                  setEmail(account.email);
-                  setPassword('password123');
-                }}
-                className={`p-3 rounded-lg border text-sm font-medium transition-colors hover:shadow-md ${account.color}`}
-              >
-                Demo {account.role}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -169,9 +147,6 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
               >
                 Sign Up
               </button>
-            </p>
-            <p className="text-xs text-gray-500 text-center mt-2">
-              Demo: Use any demo account above with password "password123"
             </p>
           </div>
         </div>
