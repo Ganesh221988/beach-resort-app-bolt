@@ -29,8 +29,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   // Handle event venue search
   const handleEventVenueSearch = (eventName: string) => {
-    const event = mockEvents.find(e => e.name === eventName);
-    setSearchData(prev => ({ ...prev, selectedEvent: event?.id || eventName }));
+    setSearchData(prev => ({ ...prev, selectedEvent: eventName }));
     setShowSearchResults(true);
   };
 
@@ -39,6 +38,30 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
     const fullProperty = convertFeaturedToFullProperty(property);
     setSelectedProperty(fullProperty);
   };
+
+  // Show search results if search was performed
+  if (showSearchResults) {
+    return (
+      <SearchResultsPage
+        searchQuery={searchData}
+        properties={allProperties || []}
+        onBack={() => setShowSearchResults(false)}
+        onLogin={onLogin}
+      />
+    );
+  }
+
+  // Show property details if property is selected
+  if (selectedProperty) {
+    return (
+      <PropertyPage
+        property={selectedProperty}
+        onBack={closePropertyDetails}
+        onLogin={onLogin}
+      />
+    );
+  }
+
   const featuredDestinations = [
     {
       name: 'Weddings',
@@ -582,7 +605,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           <div className="text-center mt-12">
             <button 
-              onClick={() => setShowSearchResults(true)}
+              onClick={onSignup}
               className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               View All Properties
