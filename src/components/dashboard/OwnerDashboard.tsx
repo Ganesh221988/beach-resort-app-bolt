@@ -11,7 +11,7 @@ import { PropertyForm } from '../property/PropertyForm';
 import { PropertyCalendar } from '../calendar/PropertyCalendar';
 import { BookingFlow } from '../booking/BookingFlow';
 import { Property, Booking } from '../../types';
-import { SocialMediaMarketing } from './SocialMediaMarketing';
+import { SocialMediaMarketing } from '../owner/SocialMediaMarketing';
 
 export function OwnerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
