@@ -482,17 +482,17 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             {featuredProperties.map((property) => (
               <div 
                 key={property.id} 
-                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
-                onClick={() => {
-                  const fullProperty = convertFeaturedToFullProperty(property);
-                  setSelectedProperty(fullProperty);
-                }}
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
               >
                 <div className="relative">
                   <img
                     src={property.image}
                     alt={property.name}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    onClick={() => {
+                      const fullProperty = convertFeaturedToFullProperty(property);
+                      setSelectedProperty(fullProperty);
+                    }}
                   />
                   <button 
                     onClick={(e) => {
@@ -508,7 +508,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   </div>
                 </div>
 
-                <div className="p-4">
+                <div 
+                  className="p-4 cursor-pointer"
+                  onClick={() => {
+                    const fullProperty = convertFeaturedToFullProperty(property);
+                    setSelectedProperty(fullProperty);
+                  }}
+                >
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-gray-900 truncate">{property.name}</h3>
                     <div className="flex items-center space-x-1">
@@ -544,7 +550,9 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                       {property.reviews} reviews
                     </div>
                   </div>
-                  
+                </div>
+                
+                <div className="px-4 pb-4">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
@@ -563,7 +571,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                       // TODO: Open booking flow
                       alert('Booking flow will open here');
                     }}
-                    className="w-full mt-3 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+                    className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   >
                     Book Now
                   </button>
