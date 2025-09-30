@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Search, MapPin, Calendar, Users, Star, ChevronRight, ChevronDown, Menu, X, User, Heart, Shield, Award, Globe } from 'lucide-react';
 import { mockEvents } from '../../data/mockData';
 import { useAuth } from '../../contexts/AuthContext';
+import { PropertyPage } from '../property/PropertyPage';
+import { Property } from '../../types';
 
 interface LandingPageProps {
   onLogin: () => void;
