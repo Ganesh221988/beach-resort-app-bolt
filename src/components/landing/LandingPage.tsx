@@ -27,6 +27,17 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
     children: 0
   });
 
+  // Handle event venue search
+  const handleEventVenueSearch = (eventName: string) => {
+    setSearchData(prev => ({ ...prev, selectedEvent: eventName }));
+    setShowSearchResults(true);
+  };
+
+  // Handle featured property click
+  const handleFeaturedPropertyClick = (property: any) => {
+    const fullProperty = convertFeaturedToFullProperty(property);
+    setSelectedProperty(fullProperty);
+  };
   const featuredDestinations = [
     {
       name: 'Weddings',
