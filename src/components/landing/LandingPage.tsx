@@ -138,7 +138,10 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
   };
 
   const handlePropertyClick = (property: any) => {
-    // Convert featured property to full Property object
+    return convertFeaturedToFullProperty(property);
+  };
+
+  const convertFeaturedToFullProperty = (property: any): Property => {
     const fullProperty: Property = {
       id: property.id.toString(),
       owner_id: 'demo-owner',
@@ -185,7 +188,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
       created_at: '2024-01-01T00:00:00Z',
       status: 'active' as const
     };
-    setSelectedProperty(fullProperty);
+    return fullProperty;
   };
 
   const closePropertyDetails = () => {
@@ -480,7 +483,10 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
               <div 
                 key={property.id} 
                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
-                onClick={() => handlePropertyClick(property)}
+                onClick={() => {
+                  const fullProperty = convertFeaturedToFullProperty(property);
+                  setSelectedProperty(fullProperty);
+                }}
               >
                 <div className="relative">
                   <img
@@ -540,7 +546,23 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   </div>
                   
                   <button 
-                   onClick={onLogin}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!user) {
+                        onLogin();
+                        return;
+                      }
+                      
+                      if (user.role !== 'customer' && user.role !== 'broker') {
+                        alert('Only customers and brokers can make bookings.');
+                        return;
+                      }
+                      
+                      const fullProperty = convertFeaturedToFullProperty(property);
+                      setSelectedProperty(fullProperty);
+                      // TODO: Open booking flow
+                      alert('Booking flow will open here');
+                    }}
                     className="w-full mt-3 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   >
                     Book Now
