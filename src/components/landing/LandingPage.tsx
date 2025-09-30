@@ -456,11 +456,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
               <div 
                 key={index} 
                 className="group cursor-pointer"
-                onClick={() => {
-                  // Show event-related properties without authentication
-                  console.log(`Showing venues for ${event.name}`);
-                  // TODO: Implement event-based property filtering
-                }}
+                onClick={() => handleEventVenueSearch(event.name)}
               >
                 <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                   <img
@@ -493,13 +489,17 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             {featuredProperties.map((property) => (
               <div 
                 key={property.id} 
-                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+                onClick={() => {
+                  const fullProperty = convertFeaturedToFullProperty(property);
+                  setSelectedProperty(fullProperty);
+                }}
               >
                 <div className="relative">
                   <img
                     src={property.image}
                     alt={property.name}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <button 
                     onClick={(e) => {
@@ -515,9 +515,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   </div>
                 </div>
 
-                <div 
-                  className="p-4"
-                >
+                <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-gray-900 truncate">{property.name}</h3>
                     <div className="flex items-center space-x-1">
@@ -553,16 +551,6 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                       {property.reviews} reviews
                     </div>
                   </div>
-                  
-                  <button 
-                    onClick={() => {
-                      const fullProperty = convertFeaturedToFullProperty(property);
-                      setSelectedProperty(fullProperty);
-                    }}
-                    className="w-full mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
-                  >
-                    View Details
-                  </button>
                 </div>
                 
                 <div className="px-4 pb-4">
@@ -581,8 +569,6 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                       
                       const fullProperty = convertFeaturedToFullProperty(property);
                       setSelectedProperty(fullProperty);
-                      // TODO: Open booking flow
-                      alert('Booking flow will open here');
                     }}
                     className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   >
@@ -623,11 +609,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   <p className="text-gray-600 mb-4">{event.description}</p>
                   <button 
                     onClick={() => {
-                      if (!user) {
-                        onLogin();
-                      } else {
-                        console.log(`Finding venues for ${event.name}`);
-                      }
+                      handleEventVenueSearch(event.name);
                     }}
                     className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
                   >
