@@ -29,7 +29,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   // Handle event venue search
   const handleEventVenueSearch = (eventName: string) => {
-    setSearchData(prev => ({ ...prev, selectedEvent: eventName }));
+    const event = mockEvents.find(e => e.name === eventName);
+    setSearchData(prev => ({ ...prev, selectedEvent: event?.id || eventName }));
     setShowSearchResults(true);
   };
 
@@ -581,7 +582,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
           <div className="text-center mt-12">
             <button 
-              onClick={onSignup}
+              onClick={() => setShowSearchResults(true)}
               className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               View All Properties

@@ -420,11 +420,11 @@ export function SearchResultsPage({ searchQuery, properties, onBack, onLogin }: 
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Search Results</h1>
                   <p className="text-gray-600">
-                    {searchQuery.selectedEvent && `Event: ${searchQuery.selectedEvent} • `}
+                    {searchQuery.selectedEvent && `Event: ${mockEvents.find(e => e.id === searchQuery.selectedEvent)?.name || searchQuery.selectedEvent} • `}
                     {searchQuery.checkIn && searchQuery.checkOut && 
                       `${new Date(searchQuery.checkIn).toLocaleDateString()} - ${new Date(searchQuery.checkOut).toLocaleDateString()} • `
                     }
-                    {searchQuery.adults + searchQuery.children} guests
+                    {(searchQuery.adults || 0) + (searchQuery.children || 0) > 0 && `${(searchQuery.adults || 0) + (searchQuery.children || 0)} guests`}
                   </p>
                 </div>
                 <div className="text-right">
@@ -439,12 +439,12 @@ export function SearchResultsPage({ searchQuery, properties, onBack, onLogin }: 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <span className="text-sm font-medium text-gray-700">Sort by:</span>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-wrap gap-2">
                     {sortOptions.map((option) => (
                       <button
                         key={option.value}
                         onClick={() => setSortBy(option.value)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        className={`px-3 py-1 text-sm font-medium rounded-lg transition-colors ${
                           sortBy === option.value
                             ? 'bg-orange-500 text-white'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
