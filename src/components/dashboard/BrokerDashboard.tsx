@@ -85,10 +85,87 @@ export function BrokerDashboard() {
   );
 
   const renderProperties = () => (
-    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-      <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-      <h3 className="text-lg font-medium text-gray-900 mb-2">Browse Properties</h3>
-      <p className="text-gray-600">Find and book properties for your customers.</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">Browse Properties</h2>
+        <div className="flex items-center space-x-3">
+          <input
+            type="text"
+            placeholder="Search properties..."
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          />
+          <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
+            Search
+          </button>
+        </div>
+      </div>
+      
+      {/* Demo Properties for Booking */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <img 
+            src="https://images.pexels.com/photos/1732414/pexels-photo-1732414.jpeg?auto=compress&cs=tinysrgb&w=800"
+            alt="Luxury Beachside Villa"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">Luxury Beachside Villa</h3>
+              <div className="flex items-center space-x-1">
+                <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                <span className="text-sm font-medium">4.8</span>
+              </div>
+            </div>
+            <p className="text-gray-600 text-sm mb-3">📍 Goa, India</p>
+            <p className="text-gray-600 text-sm mb-4">Private pool, beach access, 4 bedrooms</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-lg font-bold text-gray-900">₹8,500</span>
+                <span className="text-sm text-gray-600">/night</span>
+                <div className="text-xs text-green-600">Commission: 20%</div>
+              </div>
+              <button 
+                onClick={() => alert('Booking flow will open here for customer')}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+              >
+                Book for Customer
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <img 
+            src="https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg?auto=compress&cs=tinysrgb&w=800"
+            alt="Mountain View Resort"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">Mountain View Resort</h3>
+              <div className="flex items-center space-x-1">
+                <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                <span className="text-sm font-medium">4.9</span>
+              </div>
+            </div>
+            <p className="text-gray-600 text-sm mb-3">📍 Manali, Himachal Pradesh</p>
+            <p className="text-gray-600 text-sm mb-4">Mountain views, spa, restaurant, fireplace</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-lg font-bold text-gray-900">₹7,200</span>
+                <span className="text-sm text-gray-600">/night</span>
+                <div className="text-xs text-green-600">Commission: 20%</div>
+              </div>
+              <button 
+                onClick={() => alert('Booking flow will open here for customer')}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+              >
+                Book for Customer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 

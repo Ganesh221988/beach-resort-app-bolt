@@ -90,16 +90,69 @@ export function CustomerDashboard() {
   );
 
   const renderFavorites = () => (
-    <div className="text-center py-12">
-      <Heart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-      <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites yet</h3>
-      <p className="text-gray-600 mb-6">Save properties you love by clicking the heart icon</p>
-      <button 
-        onClick={() => setActiveTab('discover')}
-        className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
-      >
-        Browse Properties
-      </button>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900">My Favorites</h2>
+      
+      {/* Demo Favorites */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <img 
+            src="https://images.pexels.com/photos/2506988/pexels-photo-2506988.jpeg?auto=compress&cs=tinysrgb&w=800"
+            alt="Royal Heritage Hotel"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">Royal Heritage Hotel</h3>
+              <button 
+                onClick={() => alert('Removed from favorites')}
+                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <Heart className="h-4 w-4 fill-current" />
+              </button>
+            </div>
+            <p className="text-gray-600 text-sm mb-3">📍 Udaipur, Rajasthan</p>
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-bold text-gray-900">₹12,500/night</span>
+              <button 
+                onClick={() => alert('Book Royal Heritage Hotel')}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+              >
+                Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <img 
+            src="https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg?auto=compress&cs=tinysrgb&w=800"
+            alt="Backwater Retreat"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">Backwater Retreat</h3>
+              <button 
+                onClick={() => alert('Removed from favorites')}
+                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <Heart className="h-4 w-4 fill-current" />
+              </button>
+            </div>
+            <p className="text-gray-600 text-sm mb-3">📍 Alleppey, Kerala</p>
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-bold text-gray-900">₹6,800/night</span>
+              <button 
+                onClick={() => alert('Book Backwater Retreat')}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+              >
+                Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 

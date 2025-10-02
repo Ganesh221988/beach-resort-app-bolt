@@ -104,6 +104,16 @@ export function BookingFlow({ property, properties = [], onComplete, onCancel, u
   };
 
   const handleComplete = () => {
+    if (!bookingData.customer_name || !bookingData.customer_email || !bookingData.customer_phone) {
+      alert('Please fill in all required customer information');
+      return;
+    }
+    
+    if (bookingData.room_type_ids.length === 0) {
+      alert('Please select at least one room type');
+      return;
+    }
+    
     const booking: Partial<Booking> = {
       property_id: currentProperty.id,
       property_title: currentProperty.title,
@@ -127,6 +137,16 @@ export function BookingFlow({ property, properties = [], onComplete, onCancel, u
       discount_amount: pricing.discount || undefined
     };
 
+    // Show success message for demo
+    alert(`Booking created successfully! 
+    
+Property: ${booking.property_title}
+Customer: ${bookingData.customer_name}
+Total Amount: ₹${booking.total_amount?.toLocaleString()}
+Status: Pending Payment
+
+In production, this would redirect to payment gateway.`);
+    
     onComplete(booking);
   };
 

@@ -112,19 +112,64 @@ export function OwnerDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">My Properties</h2>
-        <button className="flex items-center space-x-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors">
+        <button 
+          onClick={() => alert('Property creation form will open here')}
+          className="flex items-center space-x-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+        >
           <Plus className="h-4 w-4" />
           <span>Add Property</span>
         </button>
       </div>
       
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-        <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No Properties Yet</h3>
-        <p className="text-gray-600 mb-6">Start by adding your first property to the platform.</p>
-        <button className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors">
-          Add Your First Property
-        </button>
+      {/* Demo Properties */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <img 
+            src="https://images.pexels.com/photos/1732414/pexels-photo-1732414.jpeg?auto=compress&cs=tinysrgb&w=800"
+            alt="Luxury Beachside Villa"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">Luxury Beachside Villa</h3>
+              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Active</span>
+            </div>
+            <p className="text-gray-600 text-sm mb-3">Goa, India</p>
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-bold text-gray-900">₹8,500/night</span>
+              <button 
+                onClick={() => alert('Property management features:\n\n• Edit property details\n• Manage room types\n• Update pricing\n• View bookings\n• Calendar management')}
+                className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors"
+              >
+                Manage
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <img 
+            src="https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg?auto=compress&cs=tinysrgb&w=800"
+            alt="Mountain View Resort"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">Mountain View Resort</h3>
+              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Active</span>
+            </div>
+            <p className="text-gray-600 text-sm mb-3">Manali, Himachal Pradesh</p>
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-bold text-gray-900">₹7,200/night</span>
+              <button 
+                onClick={() => alert('Property management features:\n\n• Edit property details\n• Manage room types\n• Update pricing\n• View bookings\n• Calendar management')}
+                className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors"
+              >
+                Manage
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

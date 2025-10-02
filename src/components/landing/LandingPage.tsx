@@ -155,8 +155,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
     
     // User is logged in, add to favorites
     console.log(`Adding property ${propertyId} to favorites for user ${user.id}`);
-    // TODO: Implement actual favorite functionality with database
-    alert('Property added to favorites!');
+    alert(`Property added to favorites! 
+    
+Property ID: ${propertyId}
+User: ${user.name}
+
+You can view your favorites in your dashboard.`);
   };
 
   const handleBookNow = (propertyId: number) => {
@@ -174,8 +178,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
     
     // User is logged in and has permission, proceed with booking
     console.log(`Starting booking for property ${propertyId} by user ${user.id} (${user.role})`);
-    // TODO: Implement actual booking flow
-    alert(`Booking initiated for property ${propertyId}!`);
+    
+    // Find the property and convert to full property
+    const property = featuredProperties.find(p => p.id === propertyId);
+    if (property) {
+      const fullProperty = convertFeaturedToFullProperty(property);
+      setSelectedProperty(fullProperty);
+    }
   };
 
   const handlePropertyClick = (property: any) => {

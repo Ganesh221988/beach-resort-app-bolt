@@ -158,35 +158,29 @@ export function BrokerDetailsPage({ brokerId, onBack }: BrokerDetailsPageProps) 
 
               {/* Contact Buttons */}
               <div className="flex items-center space-x-3">
-                {brokerData.contact_info?.calling_number && (
-                  <button
-                    onClick={handleCall}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span>Call</span>
-                  </button>
-                )}
+                <button
+                  onClick={handleCall}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>Call</span>
+                </button>
                 
-                {brokerData.contact_info?.whatsapp_number && (
-                  <button
-                    onClick={handleWhatsApp}
-                    className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    <span>WhatsApp</span>
-                  </button>
-                )}
+                <button
+                  onClick={handleWhatsApp}
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>WhatsApp</span>
+                </button>
                 
-                {brokerData.contact_info?.email_for_inquiries && (
-                  <button
-                    onClick={handleEmail}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
-                  >
-                    <Mail className="h-4 w-4" />
-                    <span>Email</span>
-                  </button>
-                )}
+                <button
+                  onClick={handleEmail}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg"
+                >
+                  <Mail className="h-4 w-4" />
+                  <span>Email</span>
+                </button>
               </div>
             </div>
 
