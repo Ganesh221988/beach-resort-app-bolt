@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, User, CreditCard, Mail, MessageCircle, Save, Phone } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userIntegrationService } from '../../services/integrationService';
-import ContactSettings from '../owner/ContactSettings';
+import { ContactSettings } from '../owner/ContactSettings';
 
 interface BrokerSettingsProps {
   onClose: () => void;

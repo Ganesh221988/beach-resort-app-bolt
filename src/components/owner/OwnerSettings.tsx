@@ -3,7 +3,7 @@ import { X, User, CreditCard, Mail, Instagram, Facebook, MessageCircle, Save, Up
 import { useAuth } from '../../contexts/AuthContext';
 import { PaymentGatewaySetup } from '../payment/PaymentGatewaySetup';
 import { SocialMediaSetup } from '../social/SocialMediaSetup';
-import ContactSettings from './ContactSettings';
+import { ContactSettings } from './ContactSettings';
 
 interface OwnerSettingsProps {
   onClose: () => void;

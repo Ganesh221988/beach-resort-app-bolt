@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Heart, Star, Search, Filter } from 'lucide-react';
+import { Calendar, MapPin, Heart, Star, Search } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { useAuth } from '../../contexts/AuthContext';
 
