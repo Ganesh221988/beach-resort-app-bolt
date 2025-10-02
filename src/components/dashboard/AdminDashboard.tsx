@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Users, IndianRupee, TrendingUp, Settings, UserCheck, CreditCard, BarChart3 } from 'lucide-react';
+import { Building2, Users, IndianRupee, TrendingUp, Settings, UserCheck, CreditCard, BarChart3, Calendar } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -87,7 +87,6 @@ export function AdminDashboard() {
       <Settings className="h-12 w-12 text-gray-400 mx-auto mb-4" />
       <h3 className="text-lg font-medium text-gray-900 mb-2">Platform Settings</h3>
       <p className="text-gray-600">Configure platform settings and integrations.</p>
-      </div>
     </div>
   );
 

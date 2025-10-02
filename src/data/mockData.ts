@@ -200,7 +200,6 @@ export const mockCoupons: Coupon[] = [
     applicable_to: 'all',
     usage_limit: 1000,
     used_count: 45,
-    created_by: '1',
     created_by: 'ADMIN001',
     min_booking_amount: 5000
   },
