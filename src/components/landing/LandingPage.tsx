@@ -381,7 +381,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
             <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Events</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Type</label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <select
@@ -425,31 +425,34 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
-                    <div className="relative">
-                      <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Guests</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Adults</label>
+                      <div className="relative">
+                        <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                          type="number"
+                          value={searchData.adults}
+                          onChange={(e) => setSearchData(prev => ({ ...prev, adults: parseInt(e.target.value) || 1 }))}
+                          min="1"
+                          max="20"
+                          className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Children</label>
                       <input
                         type="number"
-                        value={searchData.adults}
-                        onChange={(e) => setSearchData(prev => ({ ...prev, adults: parseInt(e.target.value) || 1 }))}
-                        min="1"
-                        max="20"
-                        className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        value={searchData.children}
+                        onChange={(e) => setSearchData(prev => ({ ...prev, children: parseInt(e.target.value) || 0 }))}
+                        min="0"
+                        max="10"
+                        className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       />
                     </div>
-                  </div>
-                  <div className="relative">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
-                    <input
-                      type="number"
-                      value={searchData.children}
-                      onChange={(e) => setSearchData(prev => ({ ...prev, children: parseInt(e.target.value) || 0 }))}
-                      min="0"
-                      max="10"
-                      className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    />
                   </div>
                 </div>
               </div>
@@ -616,7 +619,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
       </section>
 
       {/* Events Section */}
-      <section id="events" className="py-20 bg-white">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Perfect Venues for Every Event</h2>
