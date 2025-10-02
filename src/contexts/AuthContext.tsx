@@ -13,7 +13,6 @@ interface AuthContextType {
     role: 'customer' | 'owner' | 'broker';
   }) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: User['role']) => void;
   isLoading: boolean;
 }
 
@@ -23,47 +22,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log('AuthProvider rendering', { user, isLoading });
-
   useEffect(() => {
-    console.log('AuthProvider useEffect running');
-
-    // Set a timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      console.warn('Auth initialization timeout - forcing isLoading to false');
-      setIsLoading(false);
-    }, 3000);
-
-    // Get initial session
-    auth.getSession().then(({ data: { session } }) => {
-      clearTimeout(timeout);
-      if (session?.user) {
-        fetchUserProfile(session.user.id);
-      } else {
-        console.log('No active session found');
+    // Initialize auth state
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await auth.getSession();
+        if (session?.user) {
+          await fetchUserProfile(session.user.id);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+      } finally {
         setIsLoading(false);
       }
-    }).catch((error) => {
-      clearTimeout(timeout);
-      console.error('Error getting session:', error);
-      setIsLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
       if (event === 'SIGNED_IN' && session?.user) {
         await fetchUserProfile(session.user.id);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
-        setIsLoading(false);
       }
     });
 
-    return () => {
-      clearTimeout(timeout);
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
@@ -76,14 +61,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Error fetching user profile:', error);
-        setIsLoading(false);
         return;
       }
 
       if (data) {
-        // Get email from auth user
         const { data: authUser } = await auth.getUser();
-
         setUser({
           id: data.id,
           name: data.name,
@@ -97,8 +79,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -121,8 +101,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return false;
     } catch (error) {
       console.error('Login error:', error);
-      setIsLoading(false);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -150,52 +131,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (data.user) {
-        // Update user profile with additional data
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .update({
-            phone: userData.phone,
-            subscription_status: userData.role !== 'customer' ? 'trial' : null
-          })
-          .eq('id', data.user.id);
-
-        if (profileError) throw profileError;
-
+        // The user profile will be created by the database trigger
         await fetchUserProfile(data.user.id);
         return true;
       }
 
-      return true;
+      return false;
     } catch (error) {
       console.error('Signup error:', error);
-      setIsLoading(false);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    auth.signOut();
-  };
-
-  const switchRole = (role: User['role']) => {
-    // Only allow admins to switch roles (for demo purposes)
-    if (user?.role === 'admin') {
-      const newUser = { ...user, role };
-      setUser(newUser);
-    }
-  };
-
-  const value = {
-    user,
-    login,
-    signup,
-    logout,
-    switchRole,
-    isLoading
+  const logout = async () => {
+    await auth.signOut();
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{
+      user,
+      login,
+      signup,
+      logout,
+      isLoading
+    }}>
       {children}
     </AuthContext.Provider>
   );
