@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Heart, Share2, Star, MapPin, Users, Wifi, Car, Calendar, Clock, IndianRupee, Mail, MessageCircle, Copy, Check, Play, X } from 'lucide-react';
 import { Property } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
-import { favoritesService } from '../../services/supabaseService';
+import { favoritesService, userService } from '../../services/supabaseService';
 import { SEOHead, generatePropertySEO } from '../common/SEOHead';
 
 interface PropertyPageProps {
@@ -19,6 +19,7 @@ export function PropertyPage({ property, onBack, onBookNow = () => {}, onLogin }
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [ownerContactInfo, setOwnerContactInfo] = useState<any>(null);
 
   const propertyUrl = `${window.location.origin}/property/${property.id}`;
 
@@ -26,8 +27,17 @@ export function PropertyPage({ property, onBack, onBookNow = () => {}, onLogin }
     if (user) {
       checkIfFavorite();
     }
+    loadOwnerContactInfo();
   }, [user, property.id]);
 
+  const loadOwnerContactInfo = async () => {
+    try {
+      const ownerProfile = await userService.getProfile(property.owner_id);
+      setOwnerContactInfo(ownerProfile?.contact_info);
+    } catch (error) {
+      console.error('Error loading owner contact info:', error);
+    }
+  };
   const checkIfFavorite = async () => {
     if (!user) return;
     try {
@@ -72,6 +82,24 @@ export function PropertyPage({ property, onBack, onBookNow = () => {}, onLogin }
     onBookNow();
   };
 
+  const handleOwnerCall = () => {
+    const phoneNumber = ownerContactInfo?.calling_number;
+    if (phoneNumber) {
+      window.open(`tel:${phoneNumber}`);
+    } else {
+      alert('No calling number available for this property owner');
+    }
+  };
+
+  const handleOwnerWhatsApp = () => {
+    const whatsappNumber = ownerContactInfo?.whatsapp_number;
+    if (whatsappNumber) {
+      const message = encodeURIComponent(`Hi! I'm interested in ${property.title} in ${property.city}. Could you please provide more details?`);
+      window.open(`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${message}`);
+    } else {
+      alert('No WhatsApp number available for this property owner');
+    }
+  };
   const handleShare = (method: 'email' | 'whatsapp' | 'copy') => {
     const shareText = `Check out this amazing property: ${property.title} in ${property.city}. Starting from ₹${Math.min(...property.room_types.map(r => r.price_per_night)).toLocaleString()}/night`;
     
@@ -394,6 +422,45 @@ export function PropertyPage({ property, onBack, onBookNow = () => {}, onLogin }
                 Book Now
               </button>
 
+              {/* Owner Contact Buttons */}
+              {ownerContactInfo && (ownerContactInfo.calling_number || ownerContactInfo.whatsapp_number) && (
+                <div className="space-y-3 mb-4">
+                  <div className="text-sm font-medium text-gray-700 text-center">Contact Property Owner</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {ownerContactInfo.calling_number && (
+                      <button
+                        onClick={handleOwnerCall}
+                        className="flex items-center justify-center space-x-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span>Call</span>
+                      </button>
+                    )}
+                    
+                    {ownerContactInfo.whatsapp_number && (
+                      <button
+                        onClick={handleOwnerWhatsApp}
+                        className="flex items-center justify-center space-x-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        <span>WhatsApp</span>
+                      </button>
+                    )}
+                  </div>
+                  
+                  {ownerContactInfo.contact_person_name && (
+                    <div className="text-center text-xs text-gray-500">
+                      Contact: {ownerContactInfo.contact_person_name}
+                    </div>
+                  )}
+                  
+                  {ownerContactInfo.business_hours && (
+                    <div className="text-center text-xs text-gray-500">
+                      Hours: {ownerContactInfo.business_hours}
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="text-center text-sm text-gray-600 mb-4">
                 You won't be charged yet
               </div>

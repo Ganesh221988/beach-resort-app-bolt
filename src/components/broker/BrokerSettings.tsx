@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, User, CreditCard, Mail, MessageCircle, Save } from 'lucide-react';
+import { X, User, CreditCard, Mail, MessageCircle, Save, Phone } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userIntegrationService } from '../../services/integrationService';
+import { ContactSettings } from '../owner/ContactSettings';
 
 interface BrokerSettingsProps {
   onClose: () => void;
@@ -48,6 +49,7 @@ export function BrokerSettings({ onClose }: BrokerSettingsProps) {
 
   const tabs = [
     { id: 'profile', label: 'Update Profile', icon: User },
+    { id: 'contact', label: 'Contact Settings', icon: Phone },
     { id: 'razorpay', label: 'Payment Gateway', icon: CreditCard },
     { id: 'mailchimp', label: 'Email Marketing', icon: Mail },
     { id: 'support', label: 'Customer Support', icon: MessageCircle }
@@ -498,6 +500,7 @@ export function BrokerSettings({ onClose }: BrokerSettingsProps) {
           {/* Content */}
           <div className="flex-1 p-6 overflow-y-auto">
             {activeTab === 'profile' && renderProfile()}
+            {activeTab === 'contact' && <ContactSettings />}
             {activeTab === 'razorpay' && renderRazorpay()}
             {activeTab === 'mailchimp' && renderMailchimp()}
             {activeTab === 'support' && renderSupport()}

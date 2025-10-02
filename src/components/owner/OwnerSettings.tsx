@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, User, CreditCard, Mail, Instagram, Facebook, MessageCircle, Save, Upload } from 'lucide-react';
+import { X, User, CreditCard, Mail, Instagram, Facebook, MessageCircle, Save, Upload, Phone } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { PaymentGatewaySetup } from '../payment/PaymentGatewaySetup';
 import { SocialMediaSetup } from '../social/SocialMediaSetup';
+import { ContactSettings } from './ContactSettings';
 
 interface OwnerSettingsProps {
   onClose: () => void;
@@ -33,6 +34,7 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
 
   const tabs = [
     { id: 'profile', label: 'Update Profile', icon: User },
+    { id: 'contact', label: 'Contact Settings', icon: Phone },
     { id: 'payment', label: 'Payment Gateway', icon: CreditCard },
     { id: 'social', label: 'Social Media', icon: Instagram },
     { id: 'support', label: 'Customer Support', icon: MessageCircle }
@@ -303,6 +305,7 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
           {/* Content */}
           <div className="flex-1 p-6 overflow-y-auto">
             {activeTab === 'profile' && renderProfile()}
+            {activeTab === 'contact' && <ContactSettings />}
             {activeTab === 'payment' && <PaymentGatewaySetup />}
             {activeTab === 'social' && <SocialMediaSetup properties={[]} />}
             {activeTab === 'support' && renderSupport()}

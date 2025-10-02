@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Users, IndianRupee, TrendingUp, Calendar, Plus, Search, UserPlus } from 'lucide-react';
+import { Users, IndianRupee, TrendingUp, Calendar, Plus, Search, UserPlus, Settings } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { SubscriptionBadge } from '../common/SubscriptionBadge';
 import { useAuth } from '../../contexts/AuthContext';
+import { BrokerSettings } from '../broker/BrokerSettings';
 
 export function BrokerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showSettings, setShowSettings] = useState(false);
   const { user } = useAuth();
 
   const tabs = [
@@ -39,6 +41,29 @@ export function BrokerDashboard() {
           color="blue"
           change={5.2}
         />
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors group"
+          >
+            <Settings className="h-6 w-6 text-gray-400 group-hover:text-green-500" />
+            <div className="text-left">
+              <p className="font-medium text-gray-900 group-hover:text-green-600">Settings</p>
+              <p className="text-sm text-gray-500">Manage contact & integrations</p>
+            </div>
+          </button>
+          <button className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group">
+            <Search className="h-6 w-6 text-gray-400 group-hover:text-blue-500" />
+            <div className="text-left">
+              <p className="font-medium text-gray-900 group-hover:text-blue-600">Browse Properties</p>
+              <p className="text-sm text-gray-500">Find properties to book</p>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -108,6 +133,11 @@ export function BrokerDashboard() {
         {activeTab === 'bookings' && renderBookings()}
         {activeTab === 'commissions' && renderCommissions()}
         {activeTab === 'properties' && renderProperties()}
+
+        {/* Settings Modal */}
+        {showSettings && (
+          <BrokerSettings onClose={() => setShowSettings(false)} />
+        )}
       </div>
     </div>
   );

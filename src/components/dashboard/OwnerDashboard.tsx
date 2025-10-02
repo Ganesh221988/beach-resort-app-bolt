@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
-import { Building2, Calendar, IndianRupee, TrendingUp, Plus, Camera, Settings, CalendarDays } from 'lucide-react';
+import { Building2, Calendar, IndianRupee, TrendingUp, Plus, Camera, Settings, CalendarDays, Phone } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { SubscriptionBadge } from '../common/SubscriptionBadge';
 import { useAuth } from '../../contexts/AuthContext';
+import { OwnerSettings } from '../owner/OwnerSettings';
+import { BrokerDetailsPage } from '../broker/BrokerDetailsPage';
+import { BookingCard } from '../common/BookingCard';
+import { useBookings } from '../../hooks/useSupabase';
 
 export function OwnerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showSettings, setShowSettings] = useState(false);
+  const [selectedBrokerId, setSelectedBrokerId] = useState<string | null>(null);
   const { user } = useAuth();
+  const { data: bookings } = useBookings(user?.id, 'owner');
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -17,6 +24,18 @@ export function OwnerDashboard() {
     { id: 'marketing', label: 'Social Media Marketing', icon: Camera }
   ];
 
+  const handleBrokerClick = (brokerId: string) => {
+    setSelectedBrokerId(brokerId);
+  };
+
+  if (selectedBrokerId) {
+    return (
+      <BrokerDetailsPage
+        brokerId={selectedBrokerId}
+        onBack={() => setSelectedBrokerId(null)}
+      />
+    );
+  }
   const renderOverview = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -68,10 +87,20 @@ export function OwnerDashboard() {
             </div>
           </button>
           <button className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors group">
-            <Settings className="h-6 w-6 text-gray-400 group-hover:text-green-500" />
+            <Phone className="h-6 w-6 text-gray-400 group-hover:text-green-500" />
             <div className="text-left">
-              <p className="font-medium text-gray-900 group-hover:text-green-600">Manage Offers</p>
-              <p className="text-sm text-gray-500">Create promotional offers</p>
+              <p className="font-medium text-gray-900 group-hover:text-green-600">Contact Settings</p>
+              <p className="text-sm text-gray-500">Manage calling & WhatsApp</p>
+            </div>
+          </button>
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors group"
+          >
+            <Settings className="h-6 w-6 text-gray-400 group-hover:text-purple-500" />
+            <div className="text-left">
+              <p className="font-medium text-gray-900 group-hover:text-purple-600">Settings</p>
+              <p className="text-sm text-gray-500">Manage account settings</p>
             </div>
           </button>
         </div>
@@ -103,11 +132,25 @@ export function OwnerDashboard() {
   const renderBookings = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900">My Bookings</h2>
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-        <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No Bookings Yet</h3>
-        <p className="text-gray-600">Bookings will appear here once customers start booking your properties.</p>
-      </div>
+      {bookings && bookings.length > 0 ? (
+        <div className="grid grid-cols-1 gap-6">
+          {bookings.map((booking) => (
+            <BookingCard
+              key={booking.id}
+              booking={booking}
+              userRole="owner"
+              showActions={true}
+              onBrokerClick={handleBrokerClick}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+          <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No Bookings Yet</h3>
+          <p className="text-gray-600">Bookings will appear here once customers start booking your properties.</p>
+        </div>
+      )}
     </div>
   );
 
@@ -192,6 +235,11 @@ export function OwnerDashboard() {
         {activeTab === 'calendar' && renderCalendar()}
         {activeTab === 'earnings' && renderEarnings()}
         {activeTab === 'marketing' && renderMarketing()}
+
+        {/* Settings Modal */}
+        {showSettings && (
+          <OwnerSettings onClose={() => setShowSettings(false)} />
+        )}
       </div>
     </div>
   );
