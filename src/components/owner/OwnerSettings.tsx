@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { X, User, CreditCard, Mail, Instagram, Facebook, MessageCircle, Save, Upload } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { userIntegrationService } from '../../services/integrationService';
+import { PaymentGatewaySetup } from '../payment/PaymentGatewaySetup';
+import { SocialMediaSetup } from '../social/SocialMediaSetup';
 
 interface OwnerSettingsProps {
   onClose: () => void;
@@ -10,8 +11,6 @@ interface OwnerSettingsProps {
 export function OwnerSettings({ onClose }: OwnerSettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [integrations, setIntegrations] = useState<any>({});
   
   const [profileData, setProfileData] = useState({
     business_name: 'John\'s Beach Resorts',
@@ -26,29 +25,6 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
     ifsc_code: 'HDFC0001234'
   });
 
-  const [razorpayConfig, setRazorpayConfig] = useState({
-    key_id: '',
-    key_secret: '',
-    webhook_secret: '',
-    enabled: false
-  });
-
-  const [mailchimpConfig, setMailchimpConfig] = useState({
-    api_key: '',
-    server_prefix: '',
-    list_id: '',
-    enabled: false
-  });
-
-  const [socialMediaConfig, setSocialMediaConfig] = useState({
-    instagram_username: '',
-    instagram_access_token: '',
-    facebook_page_id: '',
-    facebook_access_token: '',
-    instagram_enabled: false,
-    facebook_enabled: false
-  });
-
   const [supportQuery, setSupportQuery] = useState({
     subject: '',
     message: '',
@@ -57,117 +33,14 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
 
   const tabs = [
     { id: 'profile', label: 'Update Profile', icon: User },
-    { id: 'razorpay', label: 'Payment Gateway', icon: CreditCard },
-    { id: 'mailchimp', label: 'Email Marketing', icon: Mail },
+    { id: 'payment', label: 'Payment Gateway', icon: CreditCard },
     { id: 'social', label: 'Social Media', icon: Instagram },
     { id: 'support', label: 'Customer Support', icon: MessageCircle }
   ];
 
-  // Load integrations on component mount
-  React.useEffect(() => {
-    if (user) {
-      loadIntegrations();
-    }
-  }, [user]);
-
-  const loadIntegrations = async () => {
-    if (!user) return;
-    
-    try {
-      const data = await userIntegrationService.getUserIntegrations(user.id);
-      const integrationsMap = data.reduce((acc, integration) => {
-        acc[integration.integration_type] = integration;
-        return acc;
-      }, {} as any);
-      setIntegrations(integrationsMap);
-      
-      // Update local state with loaded data
-      if (integrationsMap.razorpay) {
-        setRazorpayConfig({
-          ...integrationsMap.razorpay.integration_data,
-          enabled: integrationsMap.razorpay.is_enabled
-        });
-      }
-      if (integrationsMap.mailchimp) {
-        setMailchimpConfig({
-          ...integrationsMap.mailchimp.integration_data,
-          enabled: integrationsMap.mailchimp.is_enabled
-        });
-      }
-      if (integrationsMap.instagram) {
-        setSocialMediaConfig(prev => ({
-          ...prev,
-          ...integrationsMap.instagram.integration_data,
-          instagram_enabled: integrationsMap.instagram.is_enabled
-        }));
-      }
-      if (integrationsMap.facebook) {
-        setSocialMediaConfig(prev => ({
-          ...prev,
-          ...integrationsMap.facebook.integration_data,
-          facebook_enabled: integrationsMap.facebook.is_enabled
-        }));
-      }
-    } catch (error) {
-      console.error('Error loading integrations:', error);
-    }
-  };
-
   const handleSaveProfile = () => {
     console.log('Saving owner profile:', profileData);
     alert('Profile updated successfully!');
-  };
-
-  const handleSaveRazorpay = () => {
-    console.log('Saving Razorpay config:', razorpayConfig);
-    alert('Payment gateway settings updated successfully!');
-  };
-
-  const handleSaveMailchimp = () => {
-    console.log('Saving Mailchimp config:', mailchimpConfig);
-    alert('Email marketing settings updated successfully!');
-  };
-
-  const handleSaveSocialMedia = async () => {
-    if (!user) return;
-    
-    setLoading(true);
-    try {
-      // Save Instagram integration
-      if (socialMediaConfig.instagram_enabled) {
-        await userIntegrationService.upsertUserIntegration(
-          user.id,
-          'instagram',
-          {
-            username: socialMediaConfig.instagram_username,
-            access_token: socialMediaConfig.instagram_access_token
-          },
-          socialMediaConfig.instagram_enabled
-        );
-      }
-      
-      // Save Facebook integration
-      if (socialMediaConfig.facebook_enabled) {
-        await userIntegrationService.upsertUserIntegration(
-          user.id,
-          'facebook',
-          {
-            page_id: socialMediaConfig.facebook_page_id,
-            access_token: socialMediaConfig.facebook_access_token
-          },
-          socialMediaConfig.facebook_enabled
-        );
-      }
-      
-      await loadIntegrations();
-      alert('Social media integration updated successfully!');
-    } catch (error) {
-      console.error('Error saving social media config:', error);
-      alert('Error saving social media settings. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-    console.log('Saving social media config:', socialMediaConfig);
   };
 
   const handleSubmitSupport = () => {
@@ -318,260 +191,6 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
     </div>
   );
 
-  const renderRazorpay = () => (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Payment Gateway Integration</h3>
-      
-      <div className="flex items-center space-x-3 mb-4">
-        <input
-          type="checkbox"
-          id="razorpay-enabled"
-          checked={razorpayConfig.enabled}
-          onChange={(e) => setRazorpayConfig(prev => ({ ...prev, enabled: e.target.checked }))}
-          className="text-blue-500 focus:ring-blue-500"
-        />
-        <label htmlFor="razorpay-enabled" className="text-sm font-medium text-gray-700">
-          Enable Your Own Razorpay Gateway
-        </label>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Key ID</label>
-          <input
-            type="text"
-            value={razorpayConfig.key_id}
-            onChange={(e) => setRazorpayConfig(prev => ({ ...prev, key_id: e.target.value }))}
-            placeholder="rzp_test_xxxxxxxxxx"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            disabled={!razorpayConfig.enabled}
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Key Secret</label>
-          <input
-            type="password"
-            value={razorpayConfig.key_secret}
-            onChange={(e) => setRazorpayConfig(prev => ({ ...prev, key_secret: e.target.value }))}
-            placeholder="Enter key secret"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            disabled={!razorpayConfig.enabled}
-          />
-        </div>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Webhook Secret</label>
-        <input
-          type="password"
-          value={razorpayConfig.webhook_secret}
-          onChange={(e) => setRazorpayConfig(prev => ({ ...prev, webhook_secret: e.target.value }))}
-          placeholder="Enter webhook secret"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          disabled={!razorpayConfig.enabled}
-        />
-      </div>
-      
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <h4 className="font-medium text-green-900 mb-2">Benefits of Your Own Gateway:</h4>
-        <ul className="text-sm text-green-700 space-y-1">
-          <li>• Direct payments to your account</li>
-          <li>• Lower transaction fees</li>
-          <li>• Faster settlement times</li>
-          <li>• Complete payment control</li>
-          <li>• Custom payment flows</li>
-        </ul>
-      </div>
-      
-      <button
-        onClick={handleSaveRazorpay}
-        className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-      >
-        Save Payment Settings
-      </button>
-    </div>
-  );
-
-  const renderMailchimp = () => (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Email Marketing Integration</h3>
-      
-      <div className="flex items-center space-x-3 mb-4">
-        <input
-          type="checkbox"
-          id="mailchimp-enabled"
-          checked={mailchimpConfig.enabled}
-          onChange={(e) => setMailchimpConfig(prev => ({ ...prev, enabled: e.target.checked }))}
-          className="text-blue-500 focus:ring-blue-500"
-        />
-        <label htmlFor="mailchimp-enabled" className="text-sm font-medium text-gray-700">
-          Enable Mailchimp Integration
-        </label>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">API Key</label>
-          <input
-            type="password"
-            value={mailchimpConfig.api_key}
-            onChange={(e) => setMailchimpConfig(prev => ({ ...prev, api_key: e.target.value }))}
-            placeholder="Enter Mailchimp API key"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            disabled={!mailchimpConfig.enabled}
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Server Prefix</label>
-          <input
-            type="text"
-            value={mailchimpConfig.server_prefix}
-            onChange={(e) => setMailchimpConfig(prev => ({ ...prev, server_prefix: e.target.value }))}
-            placeholder="us1, us2, etc."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            disabled={!mailchimpConfig.enabled}
-          />
-        </div>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Default List ID</label>
-        <input
-          type="text"
-          value={mailchimpConfig.list_id}
-          onChange={(e) => setMailchimpConfig(prev => ({ ...prev, list_id: e.target.value }))}
-          placeholder="Enter default mailing list ID"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          disabled={!mailchimpConfig.enabled}
-        />
-      </div>
-      
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-        <h4 className="font-medium text-purple-900 mb-2">Email Marketing Features:</h4>
-        <ul className="text-sm text-purple-700 space-y-1">
-          <li>• Send booking confirmations</li>
-          <li>• Property update newsletters</li>
-          <li>• Promotional campaigns</li>
-          <li>• Customer feedback requests</li>
-          <li>• Seasonal offers and discounts</li>
-        </ul>
-      </div>
-      
-      <button
-        onClick={handleSaveMailchimp}
-        className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-      >
-        Save Email Settings
-      </button>
-    </div>
-  );
-
-  const renderSocialMedia = () => (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Social Media Integration</h3>
-      
-      {/* Instagram Integration */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="flex items-center space-x-3 mb-4">
-          <Instagram className="h-6 w-6 text-pink-500" />
-          <h4 className="text-lg font-medium text-gray-900">Instagram Integration</h4>
-          <input
-            type="checkbox"
-            id="instagram-enabled"
-            checked={socialMediaConfig.instagram_enabled}
-            onChange={(e) => setSocialMediaConfig(prev => ({ ...prev, instagram_enabled: e.target.checked }))}
-            className="text-pink-500 focus:ring-pink-500"
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Instagram Username</label>
-            <input
-              type="text"
-              value={socialMediaConfig.instagram_username}
-              onChange={(e) => setSocialMediaConfig(prev => ({ ...prev, instagram_username: e.target.value }))}
-              placeholder="@your_property_handle"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-              disabled={!socialMediaConfig.instagram_enabled}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Access Token</label>
-            <input
-              type="password"
-              value={socialMediaConfig.instagram_access_token}
-              onChange={(e) => setSocialMediaConfig(prev => ({ ...prev, instagram_access_token: e.target.value }))}
-              placeholder="Instagram API access token"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-              disabled={!socialMediaConfig.instagram_enabled}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Facebook Integration */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="flex items-center space-x-3 mb-4">
-          <Facebook className="h-6 w-6 text-blue-600" />
-          <h4 className="text-lg font-medium text-gray-900">Facebook Integration</h4>
-          <input
-            type="checkbox"
-            id="facebook-enabled"
-            checked={socialMediaConfig.facebook_enabled}
-            onChange={(e) => setSocialMediaConfig(prev => ({ ...prev, facebook_enabled: e.target.checked }))}
-            className="text-blue-500 focus:ring-blue-500"
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Facebook Page ID</label>
-            <input
-              type="text"
-              value={socialMediaConfig.facebook_page_id}
-              onChange={(e) => setSocialMediaConfig(prev => ({ ...prev, facebook_page_id: e.target.value }))}
-              placeholder="Your Facebook page ID"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              disabled={!socialMediaConfig.facebook_enabled}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Access Token</label>
-            <input
-              type="password"
-              value={socialMediaConfig.facebook_access_token}
-              onChange={(e) => setSocialMediaConfig(prev => ({ ...prev, facebook_access_token: e.target.value }))}
-              placeholder="Facebook API access token"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              disabled={!socialMediaConfig.facebook_enabled}
-            />
-          </div>
-        </div>
-      </div>
-      
-      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-        <h4 className="font-medium text-orange-900 mb-2">Social Media Benefits:</h4>
-        <ul className="text-sm text-orange-700 space-y-1">
-          <li>• Auto-post property photos and updates</li>
-          <li>• Share booking confirmations and reviews</li>
-          <li>• Promote special offers and events</li>
-          <li>• Increase property visibility and engagement</li>
-          <li>• Connect with potential customers directly</li>
-        </ul>
-      </div>
-      
-      <button
-        onClick={handleSaveSocialMedia}
-        className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-      >
-        Save Social Media Settings
-      </button>
-    </div>
-  );
-
   const renderSupport = () => (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-gray-900">Customer Support</h3>
@@ -684,9 +303,8 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
           {/* Content */}
           <div className="flex-1 p-6 overflow-y-auto">
             {activeTab === 'profile' && renderProfile()}
-            {activeTab === 'razorpay' && renderRazorpay()}
-            {activeTab === 'mailchimp' && renderMailchimp()}
-            {activeTab === 'social' && renderSocialMedia()}
+            {activeTab === 'payment' && <PaymentGatewaySetup />}
+            {activeTab === 'social' && <SocialMediaSetup properties={[]} />}
             {activeTab === 'support' && renderSupport()}
           </div>
         </div>
