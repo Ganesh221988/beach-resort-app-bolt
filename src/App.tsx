@@ -90,36 +90,6 @@ function AppContent() {
 function App() {
   console.log('App component rendering');
 
-  // Temporary test to see if React is working
-  const [showTest, setShowTest] = React.useState(true);
-
-  if (showTest) {
-    return (
-      <div style={{ padding: '40px', background: 'white', minHeight: '100vh' }}>
-        <h1 style={{ color: 'black', fontSize: '32px', marginBottom: '20px' }}>
-          React is Working!
-        </h1>
-        <p style={{ color: '#666', fontSize: '18px', marginBottom: '20px' }}>
-          If you see this, React is rendering correctly.
-        </p>
-        <button
-          onClick={() => setShowTest(false)}
-          style={{
-            padding: '12px 24px',
-            background: '#f97316',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          Load Full App
-        </button>
-      </div>
-    );
-  }
-
   return (
     <AuthProvider>
       <AppContent />
