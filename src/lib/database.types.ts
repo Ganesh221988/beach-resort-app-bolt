@@ -51,6 +51,48 @@ export interface Database {
           updated_at?: string
         }
       }
+      user_integrations: {
+        Row: {
+          id: string
+          user_id: string
+          integration_type: 'razorpay' | 'mailchimp' | 'instagram' | 'facebook'
+          integration_data: Json
+          is_enabled: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          integration_type: 'razorpay' | 'mailchimp' | 'instagram' | 'facebook'
+          integration_data: Json
+          is_enabled?: boolean
+        }
+        Update: {
+          integration_data?: Json
+          is_enabled?: boolean
+          updated_at?: string
+        }
+      }
+      admin_integrations: {
+        Row: {
+          id: string
+          integration_type: 'razorpay' | 'mailchimp'
+          integration_data: Json
+          is_enabled: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          integration_type: 'razorpay' | 'mailchimp'
+          integration_data: Json
+          is_enabled?: boolean
+        }
+        Update: {
+          integration_data?: Json
+          is_enabled?: boolean
+          updated_at?: string
+        }
+      }
       user_profiles: {
         Row: {
           id: string
