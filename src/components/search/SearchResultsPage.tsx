@@ -481,6 +481,7 @@ export function SearchResultsPage({ searchQuery, properties, onBack, onLogin }: 
                     property={property}
                     onSelect={handlePropertyClick}
                     showBookButton={true}
+                    onLogin={onLogin}
                   />
                 ))}
               </div>
