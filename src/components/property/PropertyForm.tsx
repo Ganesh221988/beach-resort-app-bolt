@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { X, Plus, Upload, MapPin, Camera, Save, ArrowLeft } from 'lucide-react';
 import { Property, RoomType } from '../../types';
+import { FileUpload, ImageGallery } from '../common/FileUpload';
+import { fileStorageService, FileUploadResult } from '../../services/fileStorageService';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface PropertyFormProps {
   property?: Property;
@@ -9,6 +12,7 @@ interface PropertyFormProps {
 }
 
 export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     title: property?.title || '',
     description: property?.description || '',
@@ -31,7 +35,8 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
   });
 
   const [newAmenity, setNewAmenity] = useState('');
-  const [newImage, setNewImage] = useState('');
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   const commonAmenities = [
     'WiFi', 'AC', 'Pool', 'Parking', 'Kitchen', 'Beach Access', 
@@ -55,13 +60,21 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
     }));
   };
 
-  const addImage = () => {
-    if (newImage && !formData.images.includes(newImage)) {
+  const handleImageUpload = (result: FileUploadResult) => {
+    if (result.success && result.url) {
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, newImage]
+        images: [...prev.images, result.url!]
       }));
-      setNewImage('');
+    }
+  };
+
+  const handleVideoUpload = (result: FileUploadResult) => {
+    if (result.success && result.url) {
+      setFormData(prev => ({
+        ...prev,
+        video_url: result.url!
+      }));
     }
   };
 
@@ -231,27 +244,23 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
             
             <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-blue-700">
-                <strong>Marketing Tip:</strong> Add up to 10 high-quality images. These will be used for automated social media marketing posts.
+                <strong>Upload Tips:</strong> Add up to 10 high-quality images. These will be used for automated social media marketing posts. Images are automatically optimized for web.
               </p>
             </div>
             
-            <div className="flex items-center space-x-3 mb-4">
-              <input
-                type="url"
-                value={newImage}
-                onChange={(e) => setNewImage(e.target.value)}
-                placeholder="Enter image URL (e.g., from Pexels)"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
-              <button
-                type="button"
-                onClick={addImage}
-                disabled={formData.images.length >= 10}
-                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
+            {formData.images.length < 10 && (
+              <div className="mb-6">
+                <FileUpload
+                  type="image"
+                  propertyId={property?.id || 'new-property'}
+                  multiple={true}
+                  maxFiles={10 - formData.images.length}
+                  onUploadComplete={handleImageUpload}
+                  onUploadError={(error) => alert(error)}
+                  className="mb-4"
+                />
+              </div>
+            )}
             
             <div className="mb-4 text-sm text-gray-600">
               {formData.images.length}/10 images added
@@ -260,24 +269,56 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
               )}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {formData.images.map((image, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={image}
-                    alt={`Property ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
+            {formData.images.length > 0 && (
+              <ImageGallery
+                images={formData.images}
+                onRemove={(index) => {
+                  const imageToRemove = formData.images[index];
+                  removeImage(imageToRemove);
+                }}
+                editable={true}
+              />
+            )}
+          </div>
+
+          {/* Video Upload */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Property Video (Optional)</h2>
+            
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-700">
+                <strong>Video Tip:</strong> Upload a property tour video to showcase your property better. Videos increase booking rates by 40%.
+              </p>
+            </div>
+
+            {!formData.video_url ? (
+              <FileUpload
+                type="video"
+                propertyId={property?.id || 'new-property'}
+                onUploadComplete={handleVideoUpload}
+                onUploadError={(error) => alert(error)}
+              />
+            ) : (
+              <div className="space-y-4">
+                <div className="relative">
+                  <video
+                    src={formData.video_url}
+                    controls
+                    className="w-full h-64 object-cover rounded-lg"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
                   <button
                     type="button"
-                    onClick={() => removeImage(image)}
-                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => setFormData(prev => ({ ...prev, video_url: '' }))}
+                    className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
-              ))}
-            </div>
+                <p className="text-sm text-gray-600">Video uploaded successfully. Click the X to remove and upload a different video.</p>
+              </div>
+            )}
           </div>
 
           {/* Amenities */}
