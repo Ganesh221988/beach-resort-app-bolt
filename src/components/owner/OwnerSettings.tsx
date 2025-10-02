@@ -9,6 +9,9 @@ interface OwnerSettingsProps {
 
 export function OwnerSettings({ onClose }: OwnerSettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [integrations, setIntegrations] = useState<any>({});
   
   const [profileData, setProfileData] = useState({
     business_name: 'John\'s Beach Resorts',

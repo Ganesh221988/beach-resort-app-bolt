@@ -41,7 +41,6 @@ export function OwnerDashboard() {
     { id: 'marketing', label: 'Social Media Marketing', icon: Camera }
   ];
 
-  
   // Mock broker bookings made by this owner
   const ownerBrokerBookings = [
     {
@@ -342,7 +341,7 @@ export function OwnerDashboard() {
               <div key={booking.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div>
                   <p className="font-medium text-gray-900">Booking #{booking.id.slice(0, 8)}</p>
-                  <p className="text-sm text-gray-600">{booking.property_title}</p>
+                  <p className="text-sm text-gray-600">{booking.properties?.title || 'Property'}</p>
                   <p className="text-xs text-gray-500">{new Date(booking.created_at).toLocaleDateString()}</p>
                 </div>
                 <div className="text-right">
@@ -395,6 +394,60 @@ export function OwnerDashboard() {
               Update Details
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderOtherBookings = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">Book Other Properties (As Broker)</h2>
+        <div className="flex items-center space-x-3">
+          <input
+            type="text"
+            placeholder="Search properties..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+          <select
+            value={cityFilter}
+            onChange={(e) => setCityFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {availableCities.map(city => (
+              <option key={city} value={city}>
+                {city === 'all' ? 'All Cities' : city}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm text-blue-700">
+          <strong>Broker Mode:</strong> You can book other properties on behalf of customers and earn commission.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredOtherProperties.map((property) => (
+          <PropertyCard 
+            key={property.id} 
+            property={property} 
+            onSelect={handleOtherPropertySelect}
+          />
+        ))}
+      </div>
+      
+      {/* Broker Bookings Made */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">My Broker Bookings</h3>
+        <div className="space-y-4">
+          {ownerBrokerBookings.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} userRole="broker" />
+          ))}
         </div>
       </div>
     </div>
@@ -522,60 +575,6 @@ export function OwnerDashboard() {
           onClose={() => setShowMarketingModal(false)}
         />
       )}
-    </div>
-  );
-
-  const renderOtherBookings = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Book Other Properties (As Broker)</h2>
-        <div className="flex items-center space-x-3">
-          <input
-            type="text"
-            placeholder="Search properties..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-          <select
-            value={cityFilter}
-            onChange={(e) => setCityFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            {availableCities.map(city => (
-              <option key={city} value={city}>
-                {city === 'all' ? 'All Cities' : city}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-700">
-          <strong>Broker Mode:</strong> You can book other properties on behalf of customers and earn commission.
-        </p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredOtherProperties.map((property) => (
-          <PropertyCard 
-            key={property.id} 
-            property={property} 
-            onSelect={handleOtherPropertySelect}
-          />
-        ))}
-      </div>
-      
-      {/* Broker Bookings Made */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">My Broker Bookings</h3>
-        <div className="space-y-4">
-          {ownerBrokerBookings.map((booking) => (
-            <BookingCard key={booking.id} booking={booking} userRole="broker" />
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

@@ -9,6 +9,8 @@ interface BrokerSettingsProps {
 
 export function BrokerSettings({ onClose }: BrokerSettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   
   const [profileData, setProfileData] = useState({
     agency_name: 'Sarah\'s Travel Agency',
