@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'es2015',
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -14,9 +18,7 @@ export default defineConfig({
           icons: ['lucide-react']
         }
       }
-    },
-    sourcemap: false,
-    minify: 'esbuild'
+    }
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
