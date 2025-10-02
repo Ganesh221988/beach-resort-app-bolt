@@ -7,11 +7,11 @@ import { favoritesService } from '../../services/supabaseService';
 interface PropertyPageProps {
   property: Property;
   onBack: () => void;
-  onBookNow: () => void;
+  onBookNow?: () => void;
   onLogin: () => void;
 }
 
-export function PropertyPage({ property, onBack, onBookNow, onLogin }: PropertyPageProps) {
+export function PropertyPage({ property, onBack, onBookNow = () => {}, onLogin }: PropertyPageProps) {
   const { user } = useAuth();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);

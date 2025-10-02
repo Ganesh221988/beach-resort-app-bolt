@@ -11,7 +11,6 @@ import { PropertyForm } from '../property/PropertyForm';
 import { PropertyCalendar } from '../calendar/PropertyCalendar';
 import { BookingFlow } from '../booking/BookingFlow';
 import { Property, Booking } from '../../types';
-import { SocialMediaMarketing } from '../owner/SocialMediaMarketing';
 
 export function OwnerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -109,10 +108,6 @@ export function OwnerDashboard() {
     console.log('Creating broker booking:', bookingData);
     setShowOtherBookingFlow(false);
     setSelectedOtherProperty(null);
-  };
-  
-  const requestCommissionPayout = () => {
-    alert('Commission payout request submitted successfully!');
   };
 
   const renderOverview = () => (
@@ -453,6 +448,34 @@ export function OwnerDashboard() {
     </div>
   );
 
+  const renderMarketing = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">Social Media Marketing</h2>
+        <button
+          onClick={() => setShowMarketingModal(true)}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+        >
+          <Camera className="h-4 w-4" />
+          <span>Setup Marketing</span>
+        </button>
+      </div>
+      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Automated Social Media Marketing</h3>
+        <p className="text-gray-600 mb-6">
+          Set up automated posting to Instagram and Facebook to promote your properties.
+        </p>
+        <button
+          onClick={() => setShowMarketingModal(true)}
+          className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+        >
+          Get Started
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -496,33 +519,7 @@ export function OwnerDashboard() {
         {activeTab === 'calendar' && renderCalendar()}
         {activeTab === 'earnings' && renderEarnings()}
         {activeTab === 'other-bookings' && renderOtherBookings()}
-        {activeTab === 'marketing' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">Social Media Marketing</h2>
-              <button
-                onClick={() => setShowMarketingModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
-              >
-                <Camera className="h-4 w-4" />
-                <span>Setup Marketing</span>
-              </button>
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-              <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Automated Social Media Marketing</h3>
-              <p className="text-gray-600 mb-6">
-                Set up automated posting to Instagram and Facebook to promote your properties.
-              </p>
-              <button
-                onClick={() => setShowMarketingModal(true)}
-                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
-              >
-                Get Started
-              </button>
-            </div>
-          </div>
-        )}
+        {activeTab === 'marketing' && renderMarketing()}
       </div>
       
       {/* Property Form Modal */}
@@ -547,7 +544,7 @@ export function OwnerDashboard() {
             properties={ownerProperties || []}
             onComplete={handleBookingComplete}
             onCancel={() => setShowBookingFlow(false)}
-            userRole="customer" // Owner creating booking for customer
+            userRole="customer"
             isManualBooking={true}
           />
         </div>
@@ -570,10 +567,16 @@ export function OwnerDashboard() {
       
       {/* Social Media Marketing Modal */}
       {showMarketingModal && (
-        <SocialMediaMarketing
-          properties={ownerProperties || []}
-          onClose={() => setShowMarketingModal(false)}
-        />
+        <div className="bg-white rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Social Media Marketing</h3>
+          <p className="text-gray-600 mb-4">Marketing features will be available soon.</p>
+          <button
+            onClick={() => setShowMarketingModal(false)}
+            className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
       )}
     </div>
   );
