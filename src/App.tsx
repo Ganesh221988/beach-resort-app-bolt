@@ -12,7 +12,7 @@ import { CustomerDashboard } from './components/dashboard/CustomerDashboard';
 type AppView = 'landing' | 'login' | 'signup' | 'dashboard';
 
 function AppContent() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, signup } = useAuth();
   const [currentView, setCurrentView] = React.useState<AppView>('landing');
 
   console.log('App State:', { user, isLoading, currentView });
@@ -44,14 +44,10 @@ function AppContent() {
     if (currentView === 'signup') {
       return (
         <SignupPage
-          onSignup={async (userData) => {
-            console.log('Signup attempt:', userData);
-            setCurrentView('dashboard');
-            return true;
-          }}
+          onSignup={signup}
           onBackToLanding={() => setCurrentView('landing')}
           onSwitchToLogin={() => setCurrentView('login')}
-          isLoading={false}
+          isLoading={isLoading}
         />
       );
     }

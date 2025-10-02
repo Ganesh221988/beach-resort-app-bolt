@@ -1,15 +1,15 @@
 import React from 'react';
 import { MapPin, Users, Wifi, Car, Star, IndianRupee } from 'lucide-react';
 import { Property } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
 
 interface PropertyCardProps {
   property: Property;
   onSelect?: (property: Property) => void;
   showBookButton?: boolean;
+  onLogin?: () => void;
 }
 
-export function PropertyCard({ property, onSelect, showBookButton = true }: PropertyCardProps) {
+export function PropertyCard({ property, onSelect, showBookButton = true, onLogin }: PropertyCardProps) {
   const getMinPrice = () => {
     const prices = property.room_types.map(room => room.price_per_night);
     return Math.min(...prices);
@@ -100,16 +100,6 @@ export function PropertyCard({ property, onSelect, showBookButton = true }: Prop
           {showBookButton && (
             <button 
               onClick={() => {
-                if (!user) {
-                 onLogin?.();
-                  return;
-                }
-                
-                if (user.role !== 'customer' && user.role !== 'broker') {
-                  alert('Only customers and brokers can make bookings.');
-                  return;
-                }
-                
                 onSelect?.(property);
               }}
               className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
