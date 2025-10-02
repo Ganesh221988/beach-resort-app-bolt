@@ -3,6 +3,7 @@ import { ArrowLeft, Heart, Share2, Star, MapPin, Users, Wifi, Car, Calendar, Clo
 import { Property } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import { favoritesService } from '../../services/supabaseService';
+import { SEOHead, generatePropertySEO } from '../common/SEOHead';
 
 interface PropertyPageProps {
   property: Property;
@@ -116,6 +117,8 @@ export function PropertyPage({ property, onBack, onBookNow = () => {}, onLogin }
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead {...generatePropertySEO(property)} />
+      
       {/* Header */}
       <div className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

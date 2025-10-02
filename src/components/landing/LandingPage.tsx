@@ -6,6 +6,7 @@ import { PropertyPage } from '../property/PropertyPage';
 import { SearchResultsPage } from '../search/SearchResultsPage';
 import { Property } from '../../types';
 import { useSupabaseQuery } from '../../hooks/useSupabase';
+import { SEOHead } from '../common/SEOHead';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -233,6 +234,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead />
+      
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

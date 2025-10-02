@@ -5,6 +5,7 @@ import { PropertyCard } from '../common/PropertyCard';
 import { PropertyPage } from '../property/PropertyPage';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockEvents } from '../../data/mockData';
+import { SEOHead, generateSearchSEO } from '../common/SEOHead';
 
 interface SearchResultsPageProps {
   searchQuery: {
@@ -205,6 +206,8 @@ export function SearchResultsPage({ searchQuery, properties, onBack, onLogin }: 
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead {...generateSearchSEO(searchQuery, filteredAndSortedProperties.length)} />
+      
       {/* Header */}
       <div className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
