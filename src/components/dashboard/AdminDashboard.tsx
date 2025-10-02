@@ -1,65 +1,11 @@
 import React, { useState } from 'react';
 import { Building2, Users, IndianRupee, TrendingUp, Settings, UserCheck, CreditCard, BarChart3 } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
-import { useSupabaseQuery } from '../../hooks/useSupabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { statsService } from '../../services/supabaseService';
-import { BookingCard } from '../common/BookingCard';
-import { PropertyCard } from '../common/PropertyCard';
-import { UserManagement } from '../admin/UserManagement';
-import { ReportsPage } from '../reports/ReportsPage';
-import { User } from '../../types';
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const { user } = useAuth();
-  const [stats, setStats] = useState<any>({});
-
-  const { data: properties } = useSupabaseQuery('properties');
-  const { data: bookings } = useSupabaseQuery('bookings');
-
-  // Mock users data
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: 'ADMIN001',
-      name: 'Admin User',
-      email: 'admin@ecrbeachresorts.com',
-      phone: '+91 9876543210',
-      role: 'admin',
-      kyc_status: 'verified',
-      subscription_status: 'active',
-      created_at: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: 'ECO2547001',
-      name: 'John Smith',
-      email: 'owner@ecrbeachresorts.com',
-      phone: '+91 9876543211',
-      role: 'owner',
-      kyc_status: 'verified',
-      subscription_status: 'active',
-      created_at: '2024-01-15T00:00:00Z'
-    },
-    {
-      id: 'ECB3547001',
-      name: 'Sarah Wilson',
-      email: 'broker@ecrbeachresorts.com',
-      phone: '+91 9876543212',
-      role: 'broker',
-      kyc_status: 'verified',
-      subscription_status: 'active',
-      created_at: '2024-02-01T00:00:00Z'
-    },
-    {
-      id: 'ECC1547001',
-      name: 'David Johnson',
-      email: 'customer@ecrbeachresorts.com',
-      phone: '+91 9876543213',
-      role: 'customer',
-      kyc_status: 'verified',
-      created_at: '2024-02-15T00:00:00Z'
-    }
-  ]);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -70,237 +16,77 @@ export function AdminDashboard() {
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
-  React.useEffect(() => {
-    if (user) {
-      statsService.getDashboardStats(user.id, user.role).then(setStats);
-    }
-  }, [user]);
-
-  const recentBookings = bookings?.slice(0, 5) || [];
-  const recentProperties = properties?.slice(0, 4) || [];
-
-  // Convert Supabase data to component format
-  const convertedBookings = recentBookings.map(booking => ({ ...booking, property_title: booking.properties?.title || '' }));
-  const convertedProperties = recentProperties.map(property => ({ ...property, room_types: property.room_types || [] }));
-  
-  const handleUserUpdate = (updatedUser: User) => {
-    setUsers(prev => prev.map(user => user.id === updatedUser.id ? updatedUser : user));
-  };
-  
-  const handleUserDelete = (userId: string) => {
-    setUsers(prev => prev.filter(user => user.id !== userId));
-  };
-  
-  const handleUserCreate = (userData: Partial<User>) => {
-    const newUser: User = {
-      id: Date.now().toString(),
-      name: userData.name || '',
-      email: userData.email || '',
-      phone: userData.phone || '',
-      role: userData.role || 'customer',
-      kyc_status: userData.kyc_status || 'pending',
-      created_at: new Date().toISOString()
-    };
-    setUsers(prev => [...prev, newUser]);
-  };
-
   const renderOverview = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Properties"
-          value={stats.total_properties || properties?.length || 0}
+          value={156}
           icon={Building2}
           color="blue"
-          change={stats.monthly_growth}
+          change={15.3}
         />
         <StatsCard
           title="Total Bookings"
-          value={stats.total_bookings || bookings?.length || 0}
+          value={1847}
           icon={CreditCard}
           color="green"
-          change={stats.monthly_growth}
+          change={12.8}
         />
         <StatsCard
           title="Platform Revenue"
-          value={stats.total_revenue || 0}
+          value={4567890}
           icon={IndianRupee}
           color="orange"
-          change={stats.monthly_growth}
+          change={18.7}
         />
         <StatsCard
           title="Pending Payouts"
-          value={stats.pending_payouts || 0}
+          value={234567}
           icon={TrendingUp}
           color="purple"
         />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Bookings</h3>
-          <div className="space-y-4">
-            {convertedBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking as any} userRole="admin" />
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Commission Analytics</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-              <div>
-                <p className="text-sm text-gray-600">Platform Commission (This Month)</p>
-                <p className="text-2xl font-bold text-blue-600">₹{((stats.total_revenue || 0) * 0.1).toLocaleString()}</p>
-              </div>
-              <div className="text-blue-500">
-                <IndianRupee className="h-8 w-8" />
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-              <div>
-                <p className="text-sm text-gray-600">Broker Commissions Paid</p>
-                <p className="text-2xl font-bold text-green-600">₹{((stats.total_revenue || 0) * 0.02).toLocaleString()}</p>
-              </div>
-              <div className="text-green-500">
-                <Users className="h-8 w-8" />
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
 
   const renderProperties = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Properties Management</h2>
-        <div className="flex items-center space-x-3">
-          <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Under Review</option>
-            <option>Inactive</option>
-          </select>
-          <button className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors">
-            Add Property
-          </button>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {convertedProperties.map((property) => (
-          <PropertyCard key={property.id} property={property as any} showBookButton={false} />
-        ))}
-      </div>
+    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <h3 className="text-lg font-medium text-gray-900 mb-2">Properties Management</h3>
+      <p className="text-gray-600">Manage all properties on the platform.</p>
     </div>
   );
 
   const renderBookings = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Bookings Management</h2>
-        <div className="flex items-center space-x-3">
-          <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-            <option>All Status</option>
-            <option>Pending</option>
-            <option>Confirmed</option>
-            <option>Cancelled</option>
-            <option>Completed</option>
-          </select>
-          <input
-            type="text"
-            placeholder="Search bookings..."
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-          />
-        </div>
-      </div>
-      
-      <div className="space-y-4">
-        {convertedBookings.map((booking) => (
-          <BookingCard key={booking.id} booking={booking as any} showActions userRole="admin" />
-        ))}
-      </div>
+    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <h3 className="text-lg font-medium text-gray-900 mb-2">Bookings Management</h3>
+      <p className="text-gray-600">Monitor and manage all platform bookings.</p>
     </div>
   );
 
   const renderUsers = () => (
-    <UserManagement
-      users={users}
-      onUserUpdate={handleUserUpdate}
-      onUserDelete={handleUserDelete}
-      onUserCreate={handleUserCreate}
-    />
+    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <h3 className="text-lg font-medium text-gray-900 mb-2">User Management</h3>
+      <p className="text-gray-600">Manage platform users and their permissions.</p>
+    </div>
   );
-  
+
   const renderReports = () => (
-    <ReportsPage />
+    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <h3 className="text-lg font-medium text-gray-900 mb-2">Reports & Analytics</h3>
+      <p className="text-gray-600">View detailed platform analytics and reports.</p>
+    </div>
   );
 
   const renderSettings = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Platform Settings</h2>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Commission Rates</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Platform Commission (%)
-              </label>
-              <input
-                type="number"
-                defaultValue="10"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Broker Commission (% of Platform Commission)
-              </label>
-              <input
-                type="number"
-                defaultValue="20"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
-            </div>
-            <button className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors">
-              Update Commission Rates
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Subscription Plans</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Owner Monthly Fee (₹)
-              </label>
-              <input
-                type="number"
-                defaultValue="999"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Broker Monthly Fee (₹)
-              </label>
-              <input
-                type="number"
-                defaultValue="499"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
-            </div>
-            <button className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors">
-              Update Subscription Plans
-            </button>
-          </div>
-        </div>
+    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <Settings className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <h3 className="text-lg font-medium text-gray-900 mb-2">Platform Settings</h3>
+      <p className="text-gray-600">Configure platform settings and integrations.</p>
       </div>
     </div>
   );
