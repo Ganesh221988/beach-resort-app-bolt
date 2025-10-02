@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase, auth } from '../lib/supabase';
-import { User } from '../types';
+import { safeAuth } from '../lib/supabase';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'owner' | 'broker' | 'customer';
+}
 
 interface AuthContextType {
   user: User | null;
@@ -14,91 +20,46 @@ interface AuthContextType {
   }) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  switchRole: (role: 'admin' | 'owner' | 'broker' | 'customer') => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Initialize auth state
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await auth.getSession();
-        if (session?.user) {
-          await fetchUserProfile(session.user.id);
-        }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        await fetchUserProfile(session.user.id);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return;
-      }
-
-      if (data) {
-        const { data: authUser } = await auth.getUser();
-        setUser({
-          id: data.id,
-          name: data.name,
-          email: authUser.user?.email || '',
-          phone: data.phone || '',
-          role: data.role,
-          kyc_status: data.kyc_status,
-          subscription_status: data.subscription_status || undefined,
-          created_at: data.created_at
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
     try {
-      const { data, error } = await auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        await fetchUserProfile(data.user.id);
-        return true;
-      }
+      // Demo login - simulate different user roles
+      let role: 'admin' | 'owner' | 'broker' | 'customer' = 'customer';
+      let name = 'Demo User';
       
-      return false;
+      if (email.includes('admin')) {
+        role = 'admin';
+        name = 'Admin User';
+      } else if (email.includes('owner')) {
+        role = 'owner';
+        name = 'John Smith (Owner)';
+      } else if (email.includes('broker')) {
+        role = 'broker';
+        name = 'Sarah Wilson (Broker)';
+      } else {
+        role = 'customer';
+        name = 'David Johnson (Customer)';
+      }
+
+      const demoUser: User = {
+        id: `demo-${role}`,
+        name,
+        email,
+        role
+      };
+
+      setUser(demoUser);
+      return true;
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -117,26 +78,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     
     try {
-      const { data, error } = await auth.signUp({
+      const demoUser: User = {
+        id: `demo-${userData.role}`,
+        name: userData.name,
         email: userData.email,
-        password: userData.password,
-        options: {
-          data: {
-            name: userData.name,
-            role: userData.role
-          }
-        }
-      });
+        role: userData.role
+      };
 
-      if (error) throw error;
-
-      if (data.user) {
-        // The user profile will be created by the database trigger
-        await fetchUserProfile(data.user.id);
-        return true;
-      }
-
-      return false;
+      setUser(demoUser);
+      return true;
     } catch (error) {
       console.error('Signup error:', error);
       return false;
@@ -145,9 +95,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = async () => {
-    await auth.signOut();
+  const logout = () => {
     setUser(null);
+  };
+
+  const switchRole = (role: 'admin' | 'owner' | 'broker' | 'customer') => {
+    if (user?.role === 'admin') {
+      setUser(prev => prev ? { ...prev, role } : null);
+    }
   };
 
   return (
@@ -156,7 +111,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       signup,
       logout,
-      isLoading
+      isLoading,
+      switchRole
     }}>
       {children}
     </AuthContext.Provider>

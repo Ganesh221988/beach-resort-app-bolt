@@ -1,47 +1,93 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from './database.types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log('Supabase URL:', supabaseUrl);
-console.log('Supabase Key exists:', !!supabaseAnonKey);
-
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables');
-  throw new Error('Missing Supabase environment variables');
+  console.warn('Supabase environment variables not found. Using demo mode.');
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 // Auth helpers
-export const auth = supabase.auth;
+export const auth = supabase?.auth;
 
 // Database helpers
 export const db = supabase;
 
-// Real-time subscriptions
-export const subscribeToTable = (table: string, callback: (payload: any) => void) => {
-  return supabase
-    .channel(`public:${table}`)
-    .on('postgres_changes', { event: '*', schema: 'public', table }, callback)
-    .subscribe();
+// Safe database operations with fallbacks
+export const safeQuery = async (tableName: string, options: any = {}) => {
+  if (!supabase) {
+    console.log(`Demo mode: Would query ${tableName} with options:`, options);
+    return { data: [], error: null };
+  }
+  
+  try {
+    const query = supabase.from(tableName).select(options.select || '*');
+    const { data, error } = await query;
+    return { data: data || [], error };
+  } catch (error) {
+    console.error(`Error querying ${tableName}:`, error);
+    return { data: [], error };
+  }
 };
 
-// File upload helpers
-export const uploadFile = async (bucket: string, path: string, file: File) => {
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(path, file);
+// Safe auth operations
+export const safeAuth = {
+  async signIn(email: string, password: string) {
+    if (!auth) {
+      console.log('Demo mode: Would sign in with', email);
+      return { data: { user: { id: 'demo-user', email } }, error: null };
+    }
+    
+    try {
+      return await auth.signInWithPassword({ email, password });
+    } catch (error) {
+      console.error('Auth error:', error);
+      return { data: null, error };
+    }
+  },
   
-  if (error) throw error;
-  return data;
-};
-
-export const getPublicUrl = (bucket: string, path: string) => {
-  const { data } = supabase.storage
-    .from(bucket)
-    .getPublicUrl(path);
+  async signUp(email: string, password: string, options: any = {}) {
+    if (!auth) {
+      console.log('Demo mode: Would sign up with', email);
+      return { data: { user: { id: 'demo-user', email } }, error: null };
+    }
+    
+    try {
+      return await auth.signUp({ email, password, options });
+    } catch (error) {
+      console.error('Auth error:', error);
+      return { data: null, error };
+    }
+  },
   
-  return data.publicUrl;
+  async signOut() {
+    if (!auth) {
+      console.log('Demo mode: Would sign out');
+      return { error: null };
+    }
+    
+    try {
+      return await auth.signOut();
+    } catch (error) {
+      console.error('Auth error:', error);
+      return { error };
+    }
+  },
+  
+  async getSession() {
+    if (!auth) {
+      return { data: { session: null }, error: null };
+    }
+    
+    try {
+      return await auth.getSession();
+    } catch (error) {
+      console.error('Auth error:', error);
+      return { data: { session: null }, error };
+    }
+  }
 };
