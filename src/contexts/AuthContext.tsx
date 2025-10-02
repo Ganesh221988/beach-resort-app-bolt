@@ -27,20 +27,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     console.log('AuthProvider useEffect running');
+
+    // Set a timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      console.warn('Auth initialization timeout - forcing isLoading to false');
+      setIsLoading(false);
+    }, 3000);
+
     // Get initial session
     auth.getSession().then(({ data: { session } }) => {
+      clearTimeout(timeout);
       if (session?.user) {
         fetchUserProfile(session.user.id);
       } else {
+        console.log('No active session found');
         setIsLoading(false);
       }
     }).catch((error) => {
+      clearTimeout(timeout);
       console.error('Error getting session:', error);
       setIsLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
       if (event === 'SIGNED_IN' && session?.user) {
         await fetchUserProfile(session.user.id);
       } else if (event === 'SIGNED_OUT') {
@@ -49,7 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
