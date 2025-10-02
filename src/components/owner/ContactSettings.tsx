@@ -7,7 +7,7 @@ interface ContactSettingsProps {
   onSave?: () => void;
 }
 
-export function ContactSettings({ onSave }: ContactSettingsProps) {
+export default function ContactSettings({ onSave }: ContactSettingsProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [contactData, setContactData] = useState({
