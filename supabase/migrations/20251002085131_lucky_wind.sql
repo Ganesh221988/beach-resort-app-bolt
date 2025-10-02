@@ -1,47 +1,56 @@
 /*
-  # User Management and Authentication Schema
+  # Create user profiles table
 
   1. New Tables
-    - `user_profiles` - Extended user information beyond Supabase auth
-      - `id` (uuid, references auth.users)
-      - `name` (text)
-      - `phone` (text)
+    - `user_profiles`
+      - `id` (uuid, primary key, references auth.users)
+      - `name` (text, required)
+      - `phone` (text, optional)
       - `role` (enum: admin, owner, broker, customer)
       - `kyc_status` (enum: pending, verified, rejected)
       - `subscription_status` (enum: active, inactive, trial)
-      - `business_name` (text, nullable)
-      - `agency_name` (text, nullable)
+      - `business_name` (text, for owners)
+      - `agency_name` (text, for brokers)
+      - `gst_number` (text, optional)
+      - `pan_number` (text, optional)
+      - `license_number` (text, optional)
       - `bank_details` (jsonb)
+      - `contact_info` (jsonb)
+      - `integrations` (jsonb)
       - `created_at` (timestamp)
       - `updated_at` (timestamp)
 
   2. Security
     - Enable RLS on `user_profiles` table
-    - Add policies for users to read/update their own profiles
+    - Add policies for users to read/update own profile
     - Add policy for admins to read all profiles
+
+  3. Functions
+    - Create trigger function for updated_at
+    - Create trigger function to handle new user creation
 */
 
--- Create enum types
+-- Create enums
 CREATE TYPE user_role AS ENUM ('admin', 'owner', 'broker', 'customer');
 CREATE TYPE kyc_status AS ENUM ('pending', 'verified', 'rejected');
 CREATE TYPE subscription_status AS ENUM ('active', 'inactive', 'trial');
 
--- Create user profiles table
+-- Create user_profiles table
 CREATE TABLE IF NOT EXISTS user_profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   name text NOT NULL,
   phone text,
-  role user_role NOT NULL DEFAULT 'customer',
-  kyc_status kyc_status NOT NULL DEFAULT 'pending',
+  role user_role DEFAULT 'customer'::user_role NOT NULL,
+  kyc_status kyc_status DEFAULT 'pending'::kyc_status NOT NULL,
   subscription_status subscription_status,
   business_name text,
   agency_name text,
   gst_number text,
   pan_number text,
   license_number text,
-  bank_details jsonb DEFAULT '{}',
-  contact_info jsonb DEFAULT '{}',
-  integrations jsonb DEFAULT '{}',
+  bank_details jsonb DEFAULT '{}'::jsonb,
+  contact_info jsonb DEFAULT '{}'::jsonb,
+  integrations jsonb DEFAULT '{}'::jsonb,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
@@ -49,7 +58,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
 -- Enable RLS
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 
--- Policies for user_profiles
+-- Create policies
 CREATE POLICY "Users can read own profile"
   ON user_profiles
   FOR SELECT
@@ -69,40 +78,41 @@ CREATE POLICY "Admins can read all profiles"
   USING (
     EXISTS (
       SELECT 1 FROM user_profiles 
-      WHERE id = auth.uid() AND role = 'admin'
+      WHERE id = auth.uid() AND role = 'admin'::user_role
     )
   );
 
--- Function to handle user creation
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS trigger AS $$
-BEGIN
-  INSERT INTO user_profiles (id, name, role)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
-    COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'customer')
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Trigger for new user creation
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
-
--- Function to update updated_at timestamp
+-- Create function to update updated_at column
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS trigger AS $$
+RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = now();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ language 'plpgsql';
 
--- Trigger for updated_at
+-- Create trigger for updated_at
 CREATE TRIGGER update_user_profiles_updated_at
   BEFORE UPDATE ON user_profiles
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- Create function to handle new user creation
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.user_profiles (id, name, role)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
+    COALESCE(NEW.raw_user_meta_data->>'role', 'customer')::user_role
+  );
+  RETURN NEW;
+END;
+$$ language 'plpgsql' SECURITY DEFINER;
+
+-- Create trigger for new user creation
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION handle_new_user();

@@ -1,46 +1,51 @@
 /*
-  # Properties and Room Types Schema
+  # Create properties and room types tables
 
   1. New Tables
-    - `properties` - Property listings
+    - `properties`
       - `id` (uuid, primary key)
-      - `owner_id` (uuid, references user_profiles)
-      - `title` (text)
-      - `description` (text)
-      - `address` (text)
-      - `city` (text)
-      - `state` (text)
-      - `geo` (jsonb for lat/lng)
+      - `owner_id` (uuid, foreign key to user_profiles)
+      - `title` (text, required)
+      - `description` (text, required)
+      - `address` (text, required)
+      - `city` (text, required)
+      - `state` (text, required)
+      - `geo` (jsonb, coordinates)
       - `amenities` (text array)
-      - `images` (text array)
-      - `video_url` (text)
-      - `booking_mode` (enum)
-      - `booking_types` (enum)
+      - `images` (text array, URLs)
+      - `video_url` (text, optional)
+      - `booking_mode` (enum: full_villa, rooms_only, both)
+      - `booking_types` (enum: daily, hourly, both)
       - `full_villa_rates` (jsonb)
       - `policies` (jsonb)
       - `check_in_time` (time)
       - `check_out_time` (time)
-      - `status` (enum)
+      - `status` (enum: active, inactive, under_review)
       - `created_at` (timestamp)
       - `updated_at` (timestamp)
 
-    - `room_types` - Room configurations for properties
+    - `room_types`
       - `id` (uuid, primary key)
-      - `property_id` (uuid, references properties)
-      - `title` (text)
-      - `capacity` (integer)
-      - `price_per_night` (decimal)
-      - `price_per_hour` (decimal)
-      - `extra_person_charge` (decimal)
+      - `property_id` (uuid, foreign key to properties)
+      - `title` (text, required)
+      - `capacity` (integer, default 2)
+      - `price_per_night` (numeric)
+      - `price_per_hour` (numeric, optional)
+      - `extra_person_charge` (numeric, default 0)
       - `amenities` (text array)
+      - `created_at` (timestamp)
+      - `updated_at` (timestamp)
 
   2. Security
     - Enable RLS on both tables
-    - Owners can manage their own properties
-    - Everyone can read active properties
+    - Add policies for property management
+    - Add policies for public property viewing
+
+  3. Indexes
+    - Add indexes for performance optimization
 */
 
--- Create enum types
+-- Create enums
 CREATE TYPE booking_mode AS ENUM ('full_villa', 'rooms_only', 'both');
 CREATE TYPE booking_types AS ENUM ('daily', 'hourly', 'both');
 CREATE TYPE property_status AS ENUM ('active', 'inactive', 'under_review');
@@ -54,17 +59,17 @@ CREATE TABLE IF NOT EXISTS properties (
   address text NOT NULL,
   city text NOT NULL,
   state text NOT NULL,
-  geo jsonb DEFAULT '{}',
-  amenities text[] DEFAULT '{}',
-  images text[] DEFAULT '{}',
+  geo jsonb DEFAULT '{}'::jsonb,
+  amenities text[] DEFAULT '{}'::text[],
+  images text[] DEFAULT '{}'::text[],
   video_url text,
-  booking_mode booking_mode NOT NULL DEFAULT 'both',
-  booking_types booking_types NOT NULL DEFAULT 'both',
-  full_villa_rates jsonb DEFAULT '{}',
-  policies jsonb DEFAULT '{}',
-  check_in_time time DEFAULT '15:00',
-  check_out_time time DEFAULT '11:00',
-  status property_status NOT NULL DEFAULT 'under_review',
+  booking_mode booking_mode DEFAULT 'both'::booking_mode NOT NULL,
+  booking_types booking_types DEFAULT 'both'::booking_types NOT NULL,
+  full_villa_rates jsonb DEFAULT '{}'::jsonb,
+  policies jsonb DEFAULT '{}'::jsonb,
+  check_in_time time DEFAULT '15:00:00'::time,
+  check_out_time time DEFAULT '11:00:00'::time,
+  status property_status DEFAULT 'under_review'::property_status NOT NULL,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
@@ -74,11 +79,11 @@ CREATE TABLE IF NOT EXISTS room_types (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   property_id uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   title text NOT NULL,
-  capacity integer NOT NULL DEFAULT 2,
-  price_per_night decimal(10,2) NOT NULL,
-  price_per_hour decimal(10,2),
-  extra_person_charge decimal(10,2) DEFAULT 0,
-  amenities text[] DEFAULT '{}',
+  capacity integer DEFAULT 2 NOT NULL,
+  price_per_night numeric(10,2) NOT NULL,
+  price_per_hour numeric(10,2),
+  extra_person_charge numeric(10,2) DEFAULT 0,
+  amenities text[] DEFAULT '{}'::text[],
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
@@ -91,7 +96,8 @@ ALTER TABLE room_types ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Everyone can read active properties"
   ON properties
   FOR SELECT
-  USING (status = 'active');
+  TO public
+  USING (status = 'active'::property_status);
 
 CREATE POLICY "Owners can read own properties"
   ON properties
@@ -118,7 +124,7 @@ CREATE POLICY "Admins can read all properties"
   USING (
     EXISTS (
       SELECT 1 FROM user_profiles 
-      WHERE id = auth.uid() AND role = 'admin'
+      WHERE id = auth.uid() AND role = 'admin'::user_role
     )
   );
 
@@ -126,10 +132,11 @@ CREATE POLICY "Admins can read all properties"
 CREATE POLICY "Everyone can read room types for active properties"
   ON room_types
   FOR SELECT
+  TO public
   USING (
     EXISTS (
       SELECT 1 FROM properties 
-      WHERE id = room_types.property_id AND status = 'active'
+      WHERE id = room_types.property_id AND status = 'active'::property_status
     )
   );
 
@@ -144,17 +151,19 @@ CREATE POLICY "Owners can manage room types for own properties"
     )
   );
 
--- Triggers for updated_at
-CREATE TRIGGER update_properties_updated_at
-  BEFORE UPDATE ON properties
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_room_types_updated_at
-  BEFORE UPDATE ON room_types
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Indexes for performance
+-- Create indexes
 CREATE INDEX IF NOT EXISTS idx_properties_owner_id ON properties(owner_id);
 CREATE INDEX IF NOT EXISTS idx_properties_city ON properties(city);
 CREATE INDEX IF NOT EXISTS idx_properties_status ON properties(status);
 CREATE INDEX IF NOT EXISTS idx_room_types_property_id ON room_types(property_id);
+
+-- Create triggers
+CREATE TRIGGER update_properties_updated_at
+  BEFORE UPDATE ON properties
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_room_types_updated_at
+  BEFORE UPDATE ON room_types
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
