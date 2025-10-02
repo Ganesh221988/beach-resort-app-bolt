@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, IndianRupee, TrendingUp, Calendar, Plus, Search, UserPlus, Settings } from 'lucide-react';
+import { Users, IndianRupee, TrendingUp, Calendar, Search, Settings } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { SubscriptionBadge } from '../common/SubscriptionBadge';
 import { useAuth } from '../../contexts/AuthContext';

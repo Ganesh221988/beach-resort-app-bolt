@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Phone, MessageCircle, Mail, User, Building2, Star, Calendar, IndianRupee, MapPin } from 'lucide-react';
+import { ArrowLeft, Phone, MessageCircle, Mail, User, Building2, Star, Calendar, IndianRupee } from 'lucide-react';
 import { userService, bookingService } from '../../services/supabaseService';
 import { BookingCard } from '../common/BookingCard';
 
