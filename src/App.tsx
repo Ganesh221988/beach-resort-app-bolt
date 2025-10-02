@@ -15,6 +15,8 @@ function AppContent() {
   const { user, isLoading } = useAuth();
   const [currentView, setCurrentView] = React.useState<AppView>('landing');
 
+  console.log('App State:', { user, isLoading, currentView });
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -86,6 +88,8 @@ function AppContent() {
 }
 
 function App() {
+  console.log('App component rendering');
+
   return (
     <AuthProvider>
       <AppContent />

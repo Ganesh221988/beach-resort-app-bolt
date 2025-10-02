@@ -23,7 +23,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log('AuthProvider rendering', { user, isLoading });
+
   useEffect(() => {
+    console.log('AuthProvider useEffect running');
     // Get initial session
     auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
