@@ -236,6 +236,13 @@ export function PaymentGatewaySetup({ onSave }: PaymentGatewaySetupProps) {
             Test Gateway
           </button>
         )}
+        
+        <button
+          onClick={() => alert('Payment Gateway Help:\n\n1. Sign up at https://razorpay.com\n2. Get your API keys from Dashboard > Settings > API Keys\n3. Enter Key ID and Key Secret above\n4. Enable the integration\n5. Test with a small transaction\n\nFor webhook setup:\n• Add webhook URL in Razorpay dashboard\n• Use the webhook secret for verification')}
+          className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+        >
+          Setup Help
+        </button>
       </div>
     </div>
   );

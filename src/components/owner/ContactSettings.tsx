@@ -215,6 +215,36 @@ export function ContactSettings({ onSave }: ContactSettingsProps) {
         </ul>
       </div>
 
+      {/* Test Contact Integration */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h4 className="font-medium text-blue-900 mb-3">Test Contact Integration</h4>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => {
+              const testNumber = contactData.calling_number || '+91 98765 43210';
+              window.open(`tel:${testNumber}`);
+            }}
+            className="flex items-center space-x-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+          >
+            <Phone className="h-4 w-4" />
+            <span>Test Call</span>
+          </button>
+          
+          <button
+            onClick={() => {
+              const testNumber = contactData.whatsapp_number || '+91 98765 43210';
+              const message = encodeURIComponent('Test message from ECR Beach Resorts contact settings');
+              const cleanNumber = testNumber.replace(/[^0-9]/g, '');
+              window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
+            }}
+            className="flex items-center space-x-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span>Test WhatsApp</span>
+          </button>
+        </div>
+        <p className="text-xs text-blue-600 mt-2">Click to test your contact integration</p>
+      </div>
       <button
         onClick={handleSave}
         disabled={loading || !contactData.calling_number || !contactData.whatsapp_number}

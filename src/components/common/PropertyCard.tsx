@@ -99,8 +99,13 @@ export function PropertyCard({ property, onSelect, showBookButton = true, onLogi
           
           {showBookButton && (
             <button 
-              onClick={() => {
-                onSelect?.(property);
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onSelect) {
+                  onSelect(property);
+                } else {
+                  alert(`Booking ${property.title}:\n\n• Location: ${property.city}, ${property.state}\n• Starting from: ₹${getMinPrice().toLocaleString()}/night\n• Amenities: ${property.amenities.join(', ')}\n\nClick to proceed with booking!`);
+                }
               }}
               className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
             >
