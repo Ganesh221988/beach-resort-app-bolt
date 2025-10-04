@@ -36,6 +36,7 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
     { id: 'profile', label: 'Update Profile', icon: User },
     { id: 'contact', label: 'Contact Settings', icon: Phone },
     { id: 'payment', label: 'Payment Gateway', icon: CreditCard },
+    { id: 'mailchimp', label: 'Bulk Email Integration', icon: Mail },
     { id: 'social', label: 'Social Media', icon: Instagram },
     { id: 'support', label: 'Customer Support', icon: MessageCircle }
   ];
@@ -49,6 +50,31 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
     console.log('Submitting support query:', supportQuery);
     alert('Support query submitted successfully! We will get back to you within 24 hours.');
     setSupportQuery({ subject: '', message: '', priority: 'medium' });
+  };
+
+  const handleSaveMailchimp = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      await userIntegrationService.upsertUserIntegration(
+        user.id,
+        'mailchimp',
+        {
+          api_key: mailchimpConfig.api_key,
+          server_prefix: mailchimpConfig.server_prefix,
+          list_id: mailchimpConfig.list_id
+        },
+        mailchimpConfig.enabled
+      );
+      await loadIntegrations();
+      alert('Mailchimp integration updated successfully!');
+    } catch (error) {
+      console.error('Error saving Mailchimp config:', error);
+      alert('Error saving Mailchimp configuration. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderProfile = () => (
