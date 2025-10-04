@@ -11,7 +11,7 @@ import { CustomerDashboard } from './components/dashboard/CustomerDashboard';
 
 // Main App Content
 function AppContent() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, signup } = useAuth();
   const [currentView, setCurrentView] = useState<'landing' | 'login' | 'signup'>('landing');
 
   if (isLoading) {
@@ -46,8 +46,17 @@ function AppContent() {
           onSwitchToLogin={() => setCurrentView('login')}
           onBackToLanding={() => setCurrentView('landing')}
           onSignup={async (userData) => {
-            // This will be handled by the SignupPage component
-            return true;
+            try {
+              const success = await signup(userData);
+              if (success) {
+                // User will be automatically logged in after successful signup
+                // The dashboard will be shown based on their role
+              }
+              return success;
+            } catch (error) {
+              console.error('Signup error in App:', error);
+              return false;
+            }
           }}
           isLoading={isLoading}
         />

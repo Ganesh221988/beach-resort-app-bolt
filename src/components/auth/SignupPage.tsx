@@ -66,6 +66,7 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
         setError('Signup failed. Please try again.');
       }
     } catch (err) {
+      console.error('Signup error:', err);
       setError('Signup failed. Please try again.');
     }
   };
