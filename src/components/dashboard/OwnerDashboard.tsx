@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Building2, Calendar, IndianRupee, TrendingUp, Plus, Camera, Settings, CalendarDays, Phone } from 'lucide-react';
 import { StatsCard } from '../common/StatsCard';
 import { SubscriptionBadge } from '../common/SubscriptionBadge';
+import { Navbar } from '../common/Navbar';
 import { useAuth } from '../../contexts/AuthContext';
 import { OwnerSettings } from '../owner/OwnerSettings';
 import { BrokerDetailsPage } from '../broker/BrokerDetailsPage';
@@ -239,18 +240,29 @@ export function OwnerDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">ECR Beach Resorts - Owner</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome, {user?.name}</h1>
               <p className="text-gray-600">Manage your properties and bookings</p>
             </div>
-            <SubscriptionBadge 
-              planName="Owner Pro" 
-              expiryDate="2024-04-15T00:00:00Z" 
-              userRole="owner" 
-            />
+            <div className="flex items-center space-x-4">
+              <SubscriptionBadge 
+                planName="Trial" 
+                expiryDate="2024-04-15T00:00:00Z" 
+                userRole="owner"
+                status="activation_pending"
+              />
+              <button
+                onClick={() => setShowSettings(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </button>
+            </div>
           </div>
         </div>
 
