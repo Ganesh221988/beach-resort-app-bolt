@@ -96,7 +96,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role: userData.role
       };
 
-      setUser(demoUser);
+      // Don't automatically log in after signup
+      // setUser(demoUser);
       return true;
     } catch (error) {
       console.error('Signup error:', error);
