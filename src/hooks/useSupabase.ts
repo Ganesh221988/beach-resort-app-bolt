@@ -51,9 +51,9 @@ export function useSupabaseQuery<T extends keyof Tables>(
 
         // Apply limit
         if (options?.limit) {
-        const { data, error } = await query.eq('integration_type', integrationType);
-        if (error && error.code !== 'PGRST116') throw error;
-        return data || [];
+          query = query.limit(options.limit);
+        }
+
         const { data: result, error } = await query;
 
         if (error) throw error;
