@@ -1,11 +1,11 @@
 export interface User {
   id: string;
+  unique_id: string;
   name: string;
   email: string;
   phone: string;
+  phone: string;
   role: 'admin' | 'owner' | 'broker' | 'customer';
-  kyc_status: 'pending' | 'verified' | 'rejected';
-  subscription_status?: 'active' | 'inactive' | 'trial';
   created_at: string;
 }
 
