@@ -48,25 +48,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let role: 'admin' | 'owner' | 'broker' | 'customer' = 'customer';
       let name = 'Demo User';
       
-      if (email.includes('admin')) {
-        role = 'admin';
-        name = 'Admin User';
-      } else if (email.includes('owner')) {
-        role = 'owner';
-        name = 'John Smith (Owner)';
-      } else if (email.includes('broker')) {
-        role = 'broker';
-        name = 'Sarah Wilson (Broker)';
-      } else {
-        role = 'customer';
-        name = 'David Johnson (Customer)';
+      if (signupData) {
+        const parsedSignupData = JSON.parse(signupData);
+        if (parsedSignupData.email === email) {
+          userData = parsedSignupData;
+          sessionStorage.removeItem('signupData'); // Clear after use
+        }
+      }
+      
+      // If not from signup, use demo login logic
+      if (!userData) {
+        let role: 'admin' | 'owner' | 'broker' | 'customer' = 'customer';
+        let name = 'Demo User';
+        
+        if (email.includes('admin')) {
+          role = 'admin';
+          name = 'Admin User';
+        } else if (email.includes('owner')) {
+          role = 'owner';
+          name = 'John Smith (Owner)';
+        } else if (email.includes('broker')) {
+          role = 'broker';
+          name = 'Sarah Wilson (Broker)';
+        } else {
+          role = 'customer';
+          name = 'David Johnson (Customer)';
+        }
+        
+        userData = { name, email, role };
       }
 
       const demoUser: User = {
         id: generateUUID(),
-        name,
-        email,
-        role
+        name: userData.name,
+        email: userData.email,
+        role: userData.role,
+        accountActivated: false,
+        kycStatus: 'pending'
       };
 
       setUser(demoUser);
@@ -89,15 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     
     try {
-      const demoUser: User = {
-        id: generateUUID(),
-        name: userData.name,
-        email: userData.email,
-        role: userData.role
-      };
-
-      // Don't automatically log in after signup
-      // setUser(demoUser);
+      // Store signup data for later login
+      sessionStorage.setItem('signupData', JSON.stringify(userData));
       return true;
     } catch (error) {
       console.error('Signup error:', error);
@@ -111,9 +122,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
-  const switchRole = (role: 'admin' | 'owner' | 'broker' | 'customer') => {
-    if (user?.role === 'admin') {
-      setUser(prev => prev ? { ...prev, role } : null);
+      // Check if this is a login after signup
+      const signupData = sessionStorage.getItem('signupData');
+      let userData = null;
     }
   };
 
