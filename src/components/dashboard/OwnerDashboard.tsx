@@ -253,7 +253,8 @@ export function OwnerDashboard() {
                 planName="Trial" 
                 expiryDate="2024-04-15T00:00:00Z" 
                 userRole="owner"
-                status="activation_pending"
+                status={user?.accountActivated ? "approved_account" : "activation_pending"}
+                accountActivated={user?.accountActivated}
               />
               <button
                 onClick={() => setShowSettings(true)}

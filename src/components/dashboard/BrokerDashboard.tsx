@@ -185,7 +185,8 @@ export function BrokerDashboard() {
                 planName="Trial" 
                 expiryDate="2024-05-20T00:00:00Z" 
                 userRole="broker"
-                status="activation_pending"
+                status={user?.accountActivated ? "approved_account" : "activation_pending"}
+                accountActivated={user?.accountActivated}
               />
               <button
                 onClick={() => setShowSettings(true)}

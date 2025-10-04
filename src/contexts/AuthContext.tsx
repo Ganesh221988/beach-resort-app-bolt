@@ -15,6 +15,8 @@ interface User {
   name: string;
   email: string;
   role: 'admin' | 'owner' | 'broker' | 'customer';
+  accountActivated?: boolean;
+  kycStatus?: 'pending' | 'verified' | 'rejected';
 }
 
 interface AuthContextType {
