@@ -16,7 +16,6 @@ interface SignupPageProps {
 
 export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoading }: SignupPageProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
