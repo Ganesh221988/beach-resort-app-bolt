@@ -40,13 +40,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const switchRole = (role: 'admin' | 'owner' | 'broker' | 'customer') => {
+    if (user) {
+      setUser({ ...user, role });
+    }
+  };
+
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
     try {
-      // Demo login - simulate different user roles
-      let role: 'admin' | 'owner' | 'broker' | 'customer' = 'customer';
-      let name = 'Demo User';
+      // Check if this is a login after signup
+      const signupData = sessionStorage.getItem('signupData');
+      let userData = null;
       
       if (signupData) {
         const parsedSignupData = JSON.parse(signupData);
@@ -120,12 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setUser(null);
-  };
-
-      // Check if this is a login after signup
-      const signupData = sessionStorage.getItem('signupData');
-      let userData = null;
-    }
   };
 
   return (
