@@ -244,4 +244,3 @@ export const mockDashboardStats: Record<string, DashboardStats> = {
     total_revenue: 45600,
     monthly_growth: 0
   }
-};

@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { safeAuth } from '../lib/supabase';
 
+// Generate a valid UUID v4
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 interface User {
   id: string;
   name: string;
@@ -52,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const demoUser: User = {
-        id: `demo-${role}`,
+        id: generateUUID(),
         name,
         email,
         role
@@ -79,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     try {
       const demoUser: User = {
-        id: `demo-${userData.role}`,
+        id: generateUUID(),
         name: userData.name,
         email: userData.email,
         role: userData.role

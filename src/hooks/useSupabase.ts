@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Database } from '../lib/database.types';
+import { mockProperties, mockBookings, mockDashboardStats } from '../data/mockData';
 
 type Tables = Database['public']['Tables'];
+
+// Check if we're in demo mode (no Supabase configured)
+const isDemoMode = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Generic hook for fetching data from Supabase
 export function useSupabaseQuery<T extends keyof Tables>(
@@ -20,6 +24,13 @@ export function useSupabaseQuery<T extends keyof Tables>(
 
   useEffect(() => {
     async function fetchData() {
+      // In demo mode, return empty data
+      if (isDemoMode) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         let query = supabase.from(table).select(options?.select || '*');
@@ -58,6 +69,12 @@ export function useSupabaseQuery<T extends keyof Tables>(
   }, [table, JSON.stringify(options)]);
 
   const refetch = async () => {
+    if (isDemoMode) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       let query = supabase.from(table).select(options?.select || '*');
@@ -98,6 +115,11 @@ export function useSupabaseSubscription<T extends keyof Tables>(
   callback: (payload: any) => void
 ) {
   useEffect(() => {
+    // Disable subscriptions in demo mode
+    if (isDemoMode) {
+      return;
+    }
+
     const subscription = supabase
       .channel(`public:${table}`)
       .on('postgres_changes', { event: '*', schema: 'public', table }, callback)
@@ -111,7 +133,7 @@ export function useSupabaseSubscription<T extends keyof Tables>(
 
 // Hook for properties
 export function useProperties(ownerId?: string) {
-  return useSupabaseQuery('properties', {
+  const supabaseResult = useSupabaseQuery('properties', {
     select: `
       *,
       room_types (*)
@@ -119,6 +141,22 @@ export function useProperties(ownerId?: string) {
     filter: ownerId ? { owner_id: ownerId } : undefined,
     orderBy: { column: 'created_at', ascending: false }
   });
+
+  // In demo mode, return mock data
+  if (isDemoMode) {
+    const filteredProperties = ownerId 
+      ? mockProperties.filter(p => p.owner_id === ownerId)
+      : mockProperties;
+    
+    return {
+      data: filteredProperties,
+      loading: false,
+      error: null,
+      refetch: () => Promise.resolve()
+    };
+  }
+
+  return supabaseResult;
 }
 
 // Hook for bookings
@@ -128,7 +166,7 @@ export function useBookings(userId?: string, userRole?: string) {
      userRole === 'broker' ? 'broker_id' : 'customer_id']: userId
   } : undefined;
 
-  return useSupabaseQuery('bookings', {
+  const supabaseResult = useSupabaseQuery('bookings', {
     select: `
       *,
       properties (title, city),
@@ -137,19 +175,106 @@ export function useBookings(userId?: string, userRole?: string) {
     filter,
     orderBy: { column: 'created_at', ascending: false }
   });
+
+  // In demo mode, return mock data
+  if (isDemoMode) {
+    let filteredBookings = mockBookings;
+    
+    if (userId && userRole) {
+      filteredBookings = mockBookings.filter(booking => {
+        if (userRole === 'owner') return booking.owner_id === userId;
+        if (userRole === 'broker') return booking.broker_id === userId;
+        if (userRole === 'customer') return booking.customer_id === userId;
+        return true;
+      });
+    }
+    
+    return {
+      data: filteredBookings,
+      loading: false,
+      error: null,
+      refetch: () => Promise.resolve()
+    };
+  }
+
+  return supabaseResult;
 }
 
 // Hook for subscription plans
 export function useSubscriptionPlans(type?: 'owner' | 'broker') {
-  return useSupabaseQuery('subscription_plans', {
+  const supabaseResult = useSupabaseQuery('subscription_plans', {
     filter: type ? { type, is_active: true } : { is_active: true },
     orderBy: { column: 'created_at', ascending: true }
   });
+
+  // In demo mode, return mock data
+  if (isDemoMode) {
+    const mockPlans = [
+      {
+        id: '1',
+        name: 'Basic Owner Plan',
+        type: 'owner',
+        pricing_model: 'percentage',
+        percentage: 10,
+        billing_cycle: 'monthly',
+        features: ['Property Listing', 'Basic Analytics', 'Email Support'],
+        is_active: true
+      },
+      {
+        id: '2',
+        name: 'Pro Broker Plan',
+        type: 'broker',
+        pricing_model: 'flat',
+        flat_rate: 99,
+        billing_cycle: 'monthly',
+        features: ['Unlimited Bookings', 'Advanced Analytics', 'Priority Support'],
+        is_active: true
+      }
+    ];
+
+    const filteredPlans = type ? mockPlans.filter(p => p.type === type) : mockPlans;
+    
+    return {
+      data: filteredPlans,
+      loading: false,
+      error: null,
+      refetch: () => Promise.resolve()
+    };
+  }
+
+  return supabaseResult;
 }
 
 // Hook for admin settings
 export function useAdminSettings() {
-  return useSupabaseQuery('admin_settings', {
+  const supabaseResult = useSupabaseQuery('admin_settings', {
     orderBy: { column: 'key', ascending: true }
   });
+
+  // In demo mode, return mock data
+  if (isDemoMode) {
+    const mockSettings = [
+      {
+        id: '1',
+        key: 'platform_commission',
+        value: { rate: 10 },
+        description: 'Platform commission percentage'
+      },
+      {
+        id: '2',
+        key: 'payment_gateway',
+        value: { provider: 'razorpay', enabled: true },
+        description: 'Payment gateway configuration'
+      }
+    ];
+    
+    return {
+      data: mockSettings,
+      loading: false,
+      error: null,
+      refetch: () => Promise.resolve()
+    };
+  }
+
+  return supabaseResult;
 }
