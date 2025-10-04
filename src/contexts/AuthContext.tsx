@@ -63,18 +63,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await authService.signup(userData);
       
       if (result.success) {
-        // Store signup data for login after popup
-        sessionStorage.setItem('signupData', JSON.stringify({
-          email: userData.email,
-          password: userData.password
-        }));
+        // Don't auto-login, just return success to show popup
         return true;
       } else {
-        console.error('Signup failed:', result.error);
+        // Handle specific error messages from authService
+        alert(result.error || 'Signup failed. Please try again.');
         return false;
       }
     } catch (error) {
       console.error('Signup error:', error);
+      alert('Signup failed. Please try again.');
       return false;
     } finally {
       setIsLoading(false);
