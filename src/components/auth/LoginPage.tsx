@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, LogIn, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, LogIn, Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface LoginPageProps {
@@ -12,8 +12,21 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const { login, isLoading } = useAuth();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
+  const { login, isLoading, sendPasswordReset } = useAuth();
 
+  // Check for stored signup data and auto-fill email
+  React.useEffect(() => {
+    const signupData = sessionStorage.getItem('signupData');
+    if (signupData) {
+      const parsed = JSON.parse(signupData);
+      setEmail(parsed.email);
+      setPassword(parsed.password);
+    }
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -21,13 +34,39 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
     try {
       const success = await login(email, password);
       if (!success) {
-        setError('Invalid email or password');
+        setError('Username or Password incorrect, Try again');
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError('Username or Password incorrect, Try again');
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      setResetMessage('Please enter your email address');
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      const success = await sendPasswordReset(resetEmail);
+      if (success) {
+        setResetMessage('Password reset link sent to your email!');
+        setTimeout(() => {
+          setShowForgotPassword(false);
+          setResetMessage('');
+          setResetEmail('');
+        }, 3000);
+      } else {
+        setResetMessage('No account found with this email address');
+      }
+    } catch (error) {
+      setResetMessage('Failed to send reset email. Please try again.');
+    } finally {
+      setResetLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -138,6 +177,14 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
             </button>
           </form>
 
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => setShowForgotPassword(true)}
+              className="text-sm text-orange-600 hover:underline"
+            >
+              Forgot Password?
+            </button>
+          </div>
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-600 text-center">
               Don't have an account?{' '}
@@ -151,6 +198,67 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-900">Reset Password</h3>
+                <button
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setResetMessage('');
+                    setResetEmail('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <p className="text-gray-600 mb-4">
+                Enter your email address and we'll send you a link to reset your password.
+              </p>
+              
+              <form onSubmit={handleForgotPassword}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+                
+                {resetMessage && (
+                  <div className={`p-3 rounded-lg mb-4 ${
+                    resetMessage.includes('sent') 
+                      ? 'bg-green-50 border border-green-200 text-green-700'
+                      : 'bg-red-50 border border-red-200 text-red-700'
+                  }`}>
+                    <p className="text-sm">{resetMessage}</p>
+                  </div>
+                )}
+                
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white rounded-lg transition-colors"
+                >
+                  {resetLoading ? 'Sending...' : 'Send Reset Link'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

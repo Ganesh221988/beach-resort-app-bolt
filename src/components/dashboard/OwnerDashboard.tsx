@@ -246,6 +246,7 @@ export function OwnerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome, {user?.name}</h1>
+              <p className="text-sm text-gray-500 mb-1">Owner ID: {user?.unique_id}</p>
               <p className="text-gray-600">Manage your properties and bookings</p>
             </div>
             <div className="flex items-center space-x-4">

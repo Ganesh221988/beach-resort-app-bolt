@@ -28,6 +28,7 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [checkingEmail, setCheckingEmail] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,6 +56,7 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
     }
 
     try {
+      setCheckingEmail(true);
       const success = await onSignup({
         name: formData.name,
         email: formData.email,
@@ -64,13 +66,15 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
       });
       
       if (!success) {
-        setError('Signup failed. Please try again.');
+        setError('Email ID already exists, use different email');
       } else {
         setShowSuccessModal(true);
       }
     } catch (err) {
       console.error('Signup error:', err);
       setError('Signup failed. Please try again.');
+    } finally {
+      setCheckingEmail(false);
     }
   };
 
@@ -308,15 +312,15 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || checkingEmail}
               className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
-              {isLoading ? (
+              {isLoading || checkingEmail ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <UserPlus className="h-5 w-5" />
               )}
-              <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>
+              <span>{checkingEmail ? 'Checking Email...' : isLoading ? 'Creating Account...' : 'Create Account'}</span>
             </button>
           </form>
 
