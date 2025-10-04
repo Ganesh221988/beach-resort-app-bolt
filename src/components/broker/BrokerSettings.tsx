@@ -51,7 +51,7 @@ export function BrokerSettings({ onClose }: BrokerSettingsProps) {
     { id: 'profile', label: 'Update Profile', icon: User },
     { id: 'contact', label: 'Contact Settings', icon: Phone },
     { id: 'razorpay', label: 'Payment Gateway', icon: CreditCard },
-    { id: 'mailchimp', label: 'Email Marketing', icon: Mail },
+    { id: 'mailchimp', label: 'Bulk Email Integration', icon: Mail },
     { id: 'support', label: 'Customer Support', icon: MessageCircle }
   ];
 

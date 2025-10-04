@@ -52,31 +52,6 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
     setSupportQuery({ subject: '', message: '', priority: 'medium' });
   };
 
-  const handleSaveMailchimp = async () => {
-    if (!user) return;
-    
-    setLoading(true);
-    try {
-      await userIntegrationService.upsertUserIntegration(
-        user.id,
-        'mailchimp',
-        {
-          api_key: mailchimpConfig.api_key,
-          server_prefix: mailchimpConfig.server_prefix,
-          list_id: mailchimpConfig.list_id
-        },
-        mailchimpConfig.enabled
-      );
-      await loadIntegrations();
-      alert('Mailchimp integration updated successfully!');
-    } catch (error) {
-      console.error('Error saving Mailchimp config:', error);
-      alert('Error saving Mailchimp configuration. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const renderProfile = () => (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-gray-900">Update Profile</h3>
@@ -333,6 +308,7 @@ export function OwnerSettings({ onClose }: OwnerSettingsProps) {
             {activeTab === 'profile' && renderProfile()}
             {activeTab === 'contact' && <ContactSettings />}
             {activeTab === 'payment' && <PaymentGatewaySetup />}
+            {activeTab === 'mailchimp' && renderMailchimp()}
             {activeTab === 'social' && <SocialMediaSetup properties={[]} />}
             {activeTab === 'support' && renderSupport()}
           </div>
