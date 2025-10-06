@@ -64,10 +64,15 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
         role: formData.role
       });
       
-      if (!success) {
-        setError('Email ID already exists, use different email');
-      } else {
+      if (success) {
+        // Store signup data for auto-fill on login page
+        sessionStorage.setItem('signupData', JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }));
         setShowSuccessModal(true);
+      } else {
+        setError('Email ID already exists, use different email');
       }
     } catch (err) {
       console.error('Signup error:', err);

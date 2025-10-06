@@ -63,11 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await authService.signup(userData);
       
       if (result.success) {
-        // Don't auto-login, just return success to show popup
         return true;
       } else {
-        // Handle specific error messages from authService
-        // Don't show alert here, let the component handle the error
         console.error('Signup failed:', result.error);
         return false;
       }
