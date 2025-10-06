@@ -14,7 +14,6 @@ interface SignupPageProps {
   isLoading: boolean;
 }
 
-export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoading }: SignupPageProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -28,7 +27,6 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
-  const [checkingEmail, setCheckingEmail] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +54,6 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
     }
 
     try {
-      setCheckingEmail(true);
       const success = await onSignup({
         name: formData.name,
         email: formData.email,
@@ -66,15 +63,14 @@ export function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoadi
       });
       
       if (!success) {
-        setError('Email ID already exists, use different email');
+        // Error will be shown by the signup function
+        return;
       } else {
         setShowSuccessModal(true);
       }
     } catch (err) {
       console.error('Signup error:', err);
       setError('Signup failed. Please try again.');
-    } finally {
-      setCheckingEmail(false);
     }
   };
 

@@ -67,12 +67,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return true;
       } else {
         // Handle specific error messages from authService
-        alert(result.error || 'Signup failed. Please try again.');
+        // Don't show alert here, let the component handle the error
+        console.error('Signup failed:', result.error);
         return false;
       }
     } catch (error) {
       console.error('Signup error:', error);
-      alert('Signup failed. Please try again.');
       return false;
     } finally {
       setIsLoading(false);
