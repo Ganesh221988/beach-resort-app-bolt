@@ -14,6 +14,7 @@ interface SignupPageProps {
   isLoading: boolean;
 }
 
+export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin, isLoading }: SignupPageProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -27,6 +28,7 @@ interface SignupPageProps {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [checkingEmail, setCheckingEmail] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -333,43 +335,6 @@ interface SignupPageProps {
         </div>
       </div>
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="h-8 w-8 text-white" />
-              </div>
-              
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Congratulations!</h3>
-              <p className="text-lg text-gray-700 mb-6">
-                Your account has been created successfully. Welcome to ECR Beach Resorts Family!
-              </p>
-              
-              <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600">
-                  You can now sign in with your credentials to start exploring amazing properties and booking your perfect getaway.
-                </p>
-              </div>
-              
-              <button
-                onClick={handleCloseSuccessModal}
-                className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                <span>Continue to Sign In</span>
-              </button>
-            </div>
-            
-            <button
-              onClick={handleCloseSuccessModal}
-              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      )}
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
