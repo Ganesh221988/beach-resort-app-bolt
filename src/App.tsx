@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LandingPage } from './components/landing/LandingPage';
 import { LoginPage } from './components/auth/LoginPage';
-import { SignupPage } from './components/auth/SignupPage';
+import SignupPage from './components/auth/SignupPage';
 import { AdminDashboard } from './components/dashboard/AdminDashboard';
 import { OwnerDashboard } from './components/dashboard/OwnerDashboard';
 import { BrokerDashboard } from './components/dashboard/BrokerDashboard';
