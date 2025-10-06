@@ -63,8 +63,7 @@ interface SignupPageProps {
       });
       
       if (!success) {
-        // Error will be shown by the signup function
-        return;
+        setError('Email ID already exists, use different email');
       } else {
         setShowSuccessModal(true);
       }
