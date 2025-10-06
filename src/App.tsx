@@ -48,10 +48,6 @@ function AppContent() {
           onSignup={async (userData) => {
             try {
               const success = await signup(userData);
-              if (success) {
-                // User will be automatically logged in after successful signup
-                // The dashboard will be shown based on their role
-              }
               return success;
             } catch (error) {
               console.error('Signup error in App:', error);
