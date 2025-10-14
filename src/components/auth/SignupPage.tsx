@@ -59,30 +59,39 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    console.log('=== FORM SUBMIT TRIGGERED ===');
+    console.log('Form data:', formData);
+
     setError('');
 
     if (!formData.name || !formData.email || !formData.phone || !formData.password) {
       setError('Please fill in all required fields');
+      console.log('Validation failed: Missing fields');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      console.log('Validation failed: Passwords do not match');
       return;
     }
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long');
+      console.log('Validation failed: Password too short');
       return;
     }
 
     if (!formData.agreeToTerms) {
       setError('Please agree to the terms and conditions');
+      console.log('Validation failed: Terms not agreed');
       return;
     }
 
     try {
-      console.log('Starting signup...');
+      console.log('=== CALLING onSignup ===');
       const success = await onSignup({
         name: formData.name,
         email: formData.email,
@@ -91,10 +100,10 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
         role: formData.role
       });
 
-      console.log('Signup result:', success);
+      console.log('=== SIGNUP RESULT ===', success);
 
       if (success) {
-        console.log('Signup successful, showing modal...');
+        console.log('=== SUCCESS - SHOWING MODAL ===');
         sessionStorage.setItem('signupEmail', formData.email);
 
         setFormData({ ...initialFormState });
@@ -103,13 +112,17 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
         setFormKey(prev => prev + 1);
 
         setShowSuccessModal(true);
-        console.log('Modal state set to true');
+        console.log('=== MODAL STATE SET TO TRUE ===');
+
+        setTimeout(() => {
+          console.log('Current showSuccessModal state after timeout:', showSuccessModal);
+        }, 100);
       } else {
-        console.log('Signup failed');
+        console.log('=== SIGNUP FAILED ===');
         setError('Email ID already exists, use different email');
       }
     } catch (err) {
-      console.error('Signup error:', err);
+      console.error('=== SIGNUP ERROR ===', err);
       setError('Signup failed. Please try again.');
     }
   };
