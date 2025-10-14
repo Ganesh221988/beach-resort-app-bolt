@@ -190,13 +190,15 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                 </div>
                 <input
                   id="name"
-                  name="name"
+                  name="signup-name-field"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Enter your full name"
                   autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                   required
                 />
               </div>
@@ -212,13 +214,15 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                 </div>
                 <input
                   id="email"
-                  name="email"
-                  type="email"
+                  name="signup-email-field"
+                  type="text"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Enter your email"
                   autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                   required
                 />
               </div>
@@ -234,13 +238,15 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                 </div>
                 <input
                   id="phone"
-                  name="phone"
-                  type="tel"
+                  name="signup-phone-field"
+                  type="text"
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="+91 98765 43210"
                   autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                   required
                 />
               </div>
@@ -256,13 +262,15 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                 </div>
                 <input
                   id="password"
-                  name="password"
+                  name="signup-password-field"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Create a password"
                   autoComplete="new-password"
+                  data-lpignore="true"
+                  data-form-type="other"
                   required
                 />
                 <button
@@ -289,13 +297,15 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                 </div>
                 <input
                   id="confirmPassword"
-                  name="confirmPassword"
+                  name="signup-confirm-password-field"
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Confirm your password"
                   autoComplete="new-password"
+                  data-lpignore="true"
+                  data-form-type="other"
                   required
                 />
                 <button
