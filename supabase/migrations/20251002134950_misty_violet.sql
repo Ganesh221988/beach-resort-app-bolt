@@ -29,25 +29,25 @@
 */
 
 -- Create custom types
-CREATE TYPE user_role AS ENUM ('admin', 'owner', 'broker', 'customer');
-CREATE TYPE kyc_status AS ENUM ('pending', 'verified', 'rejected');
-CREATE TYPE subscription_status AS ENUM ('active', 'inactive', 'trial');
-CREATE TYPE booking_mode AS ENUM ('full_villa', 'rooms_only', 'both');
-CREATE TYPE booking_types AS ENUM ('daily', 'hourly', 'both');
-CREATE TYPE property_status AS ENUM ('active', 'inactive', 'under_review');
-CREATE TYPE duration_type AS ENUM ('day', 'hour');
-CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'cancelled', 'completed');
-CREATE TYPE payment_status AS ENUM ('pending', 'success', 'failed', 'refunded');
-CREATE TYPE transaction_type AS ENUM ('payment', 'refund', 'commission', 'payout', 'subscription');
-CREATE TYPE commission_status AS ENUM ('pending', 'paid');
-CREATE TYPE coupon_type AS ENUM ('percentage', 'fixed');
-CREATE TYPE plan_type AS ENUM ('owner', 'broker');
-CREATE TYPE pricing_model AS ENUM ('percentage', 'flat');
-CREATE TYPE billing_cycle AS ENUM ('monthly', 'yearly');
-CREATE TYPE integration_type AS ENUM ('razorpay', 'mailchimp', 'instagram', 'facebook');
-CREATE TYPE marketing_frequency AS ENUM ('every_2_days', 'weekly', 'monthly');
-CREATE TYPE social_platform AS ENUM ('instagram', 'facebook');
-CREATE TYPE post_status AS ENUM ('scheduled', 'posted', 'failed');
+DO $$ BEGIN CREATE TYPE user_role AS ENUM ('admin', 'owner', 'broker', 'customer'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE kyc_status AS ENUM ('pending', 'verified', 'rejected'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE subscription_status AS ENUM ('active', 'inactive', 'trial'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE booking_mode AS ENUM ('full_villa', 'rooms_only', 'both'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE booking_types AS ENUM ('daily', 'hourly', 'both'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE property_status AS ENUM ('active', 'inactive', 'under_review'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE duration_type AS ENUM ('day', 'hour'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'cancelled', 'completed'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE payment_status AS ENUM ('pending', 'success', 'failed', 'refunded'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE transaction_type AS ENUM ('payment', 'refund', 'commission', 'payout', 'subscription'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE commission_status AS ENUM ('pending', 'paid'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE coupon_type AS ENUM ('percentage', 'fixed'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE plan_type AS ENUM ('owner', 'broker'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE pricing_model AS ENUM ('percentage', 'flat'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE billing_cycle AS ENUM ('monthly', 'yearly'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE integration_type AS ENUM ('razorpay', 'mailchimp', 'instagram', 'facebook'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE marketing_frequency AS ENUM ('every_2_days', 'weekly', 'monthly'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE social_platform AS ENUM ('instagram', 'facebook'); EXCEPTION WHEN duplicate_object THEN null; END $$;
+DO $$ BEGIN CREATE TYPE post_status AS ENUM ('scheduled', 'posted', 'failed'); EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- Create trigger function for updating timestamps
 CREATE OR REPLACE FUNCTION update_updated_at_column()

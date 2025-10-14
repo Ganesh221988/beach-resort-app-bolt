@@ -29,7 +29,11 @@
 */
 
 -- Create enum
-CREATE TYPE integration_type AS ENUM ('razorpay', 'mailchimp', 'instagram', 'facebook');
+DO $$ BEGIN
+  CREATE TYPE integration_type AS ENUM ('razorpay', 'mailchimp', 'instagram', 'facebook');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create user_integrations table
 CREATE TABLE IF NOT EXISTS user_integrations (

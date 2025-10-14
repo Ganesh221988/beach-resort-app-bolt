@@ -46,10 +46,29 @@
 */
 
 -- Create enums
-CREATE TYPE duration_type AS ENUM ('day', 'hour');
-CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'cancelled', 'completed');
-CREATE TYPE payment_status AS ENUM ('pending', 'success', 'failed', 'refunded');
-CREATE TYPE transaction_type AS ENUM ('payment', 'refund', 'commission', 'payout', 'subscription');
+DO $$ BEGIN
+  CREATE TYPE duration_type AS ENUM ('day', 'hour');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'cancelled', 'completed');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE payment_status AS ENUM ('pending', 'success', 'failed', 'refunded');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE transaction_type AS ENUM ('payment', 'refund', 'commission', 'payout', 'subscription');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create bookings table
 CREATE TABLE IF NOT EXISTS bookings (

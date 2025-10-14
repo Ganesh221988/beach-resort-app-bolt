@@ -31,9 +31,23 @@
 */
 
 -- Create enums
-CREATE TYPE user_role AS ENUM ('admin', 'owner', 'broker', 'customer');
-CREATE TYPE kyc_status AS ENUM ('pending', 'verified', 'rejected');
-CREATE TYPE subscription_status AS ENUM ('active', 'inactive', 'trial');
+DO $$ BEGIN
+  CREATE TYPE user_role AS ENUM ('admin', 'owner', 'broker', 'customer');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE kyc_status AS ENUM ('pending', 'verified', 'rejected');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE subscription_status AS ENUM ('active', 'inactive', 'trial');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()

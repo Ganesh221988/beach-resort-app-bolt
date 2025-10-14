@@ -22,15 +22,59 @@
 */
 
 -- Create additional enums
-CREATE TYPE commission_status AS ENUM ('pending', 'paid');
-CREATE TYPE coupon_type AS ENUM ('percentage', 'fixed');
-CREATE TYPE plan_type AS ENUM ('owner', 'broker');
-CREATE TYPE pricing_model AS ENUM ('percentage', 'flat');
-CREATE TYPE billing_cycle AS ENUM ('monthly', 'yearly');
-CREATE TYPE integration_type AS ENUM ('razorpay', 'mailchimp', 'instagram', 'facebook');
-CREATE TYPE marketing_frequency AS ENUM ('every_2_days', 'weekly', 'monthly');
-CREATE TYPE social_platform AS ENUM ('instagram', 'facebook');
-CREATE TYPE post_status AS ENUM ('scheduled', 'posted', 'failed');
+DO $$ BEGIN
+  CREATE TYPE commission_status AS ENUM ('pending', 'paid');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE coupon_type AS ENUM ('percentage', 'fixed');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE plan_type AS ENUM ('owner', 'broker');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE pricing_model AS ENUM ('percentage', 'flat');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE billing_cycle AS ENUM ('monthly', 'yearly');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE integration_type AS ENUM ('razorpay', 'mailchimp', 'instagram', 'facebook');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE marketing_frequency AS ENUM ('every_2_days', 'weekly', 'monthly');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE social_platform AS ENUM ('instagram', 'facebook');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE post_status AS ENUM ('scheduled', 'posted', 'failed');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create user_favorites table
 CREATE TABLE IF NOT EXISTS user_favorites (

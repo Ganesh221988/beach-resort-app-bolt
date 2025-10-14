@@ -46,9 +46,23 @@
 */
 
 -- Create enums
-CREATE TYPE booking_mode AS ENUM ('full_villa', 'rooms_only', 'both');
-CREATE TYPE booking_types AS ENUM ('daily', 'hourly', 'both');
-CREATE TYPE property_status AS ENUM ('active', 'inactive', 'under_review');
+DO $$ BEGIN
+  CREATE TYPE booking_mode AS ENUM ('full_villa', 'rooms_only', 'both');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE booking_types AS ENUM ('daily', 'hourly', 'both');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE property_status AS ENUM ('active', 'inactive', 'under_review');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create properties table
 CREATE TABLE IF NOT EXISTS properties (

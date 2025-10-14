@@ -49,9 +49,23 @@
 */
 
 -- Create enums
-CREATE TYPE plan_type AS ENUM ('owner', 'broker');
-CREATE TYPE pricing_model AS ENUM ('percentage', 'flat');
-CREATE TYPE billing_cycle AS ENUM ('monthly', 'yearly');
+DO $$ BEGIN
+  CREATE TYPE plan_type AS ENUM ('owner', 'broker');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE pricing_model AS ENUM ('percentage', 'flat');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE billing_cycle AS ENUM ('monthly', 'yearly');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create user_favorites table
 CREATE TABLE IF NOT EXISTS user_favorites (

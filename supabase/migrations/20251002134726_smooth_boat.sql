@@ -66,11 +66,35 @@
 */
 
 -- Create enums
-CREATE TYPE marketing_frequency AS ENUM ('every_2_days', 'weekly', 'monthly');
-CREATE TYPE social_platform AS ENUM ('instagram', 'facebook');
-CREATE TYPE post_status AS ENUM ('scheduled', 'posted', 'failed');
-CREATE TYPE commission_status AS ENUM ('pending', 'paid');
-CREATE TYPE coupon_type AS ENUM ('percentage', 'fixed');
+DO $$ BEGIN
+  CREATE TYPE marketing_frequency AS ENUM ('every_2_days', 'weekly', 'monthly');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE social_platform AS ENUM ('instagram', 'facebook');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE post_status AS ENUM ('scheduled', 'posted', 'failed');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE commission_status AS ENUM ('pending', 'paid');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE coupon_type AS ENUM ('percentage', 'fixed');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create marketing_campaigns table
 CREATE TABLE IF NOT EXISTS marketing_campaigns (
