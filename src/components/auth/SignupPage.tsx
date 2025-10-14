@@ -48,6 +48,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
       inputs.forEach((input: any) => {
         if (input) {
           input.value = '';
+          input.removeAttribute('readonly');
         }
       });
       setFormData({ ...initialFormState });
@@ -210,13 +211,11 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  onFocus={(e) => e.target.removeAttribute('readonly')}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Enter your full name"
                   autoComplete="nope"
                   data-lpignore="true"
                   data-form-type="other"
-                  readOnly
                   required
                 />
               </div>
@@ -236,13 +235,11 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   type="text"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  onFocus={(e) => e.target.removeAttribute('readonly')}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Enter your email"
                   autoComplete="nope"
                   data-lpignore="true"
                   data-form-type="other"
-                  readOnly
                   required
                 />
               </div>
@@ -262,13 +259,11 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   type="text"
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  onFocus={(e) => e.target.removeAttribute('readonly')}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="+91 98765 43210"
                   autoComplete="nope"
                   data-lpignore="true"
                   data-form-type="other"
-                  readOnly
                   required
                 />
               </div>
@@ -288,13 +283,11 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                  onFocus={(e) => e.target.removeAttribute('readonly')}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Create a password"
                   autoComplete="new-pwd"
                   data-lpignore="true"
                   data-form-type="other"
-                  readOnly
                   required
                 />
                 <button
@@ -325,13 +318,11 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  onFocus={(e) => e.target.removeAttribute('readonly')}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Confirm your password"
                   autoComplete="new-pwd"
                   data-lpignore="true"
                   data-form-type="other"
-                  readOnly
                   required
                 />
                 <button
