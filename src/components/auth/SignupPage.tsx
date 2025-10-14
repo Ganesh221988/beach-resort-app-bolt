@@ -32,6 +32,8 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
   const [error, setError] = useState('');
   const [formKey, setFormKey] = useState(0);
 
+  console.log('SignupPage render - showSuccessModal:', showSuccessModal, 'formData:', formData);
+
   // Reset form completely when component mounts
   useEffect(() => {
     setFormData({ ...initialFormState });
@@ -66,6 +68,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
     }
 
     try {
+      console.log('Starting signup...');
       const success = await onSignup({
         name: formData.name,
         email: formData.email,
@@ -74,16 +77,21 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
         role: formData.role
       });
 
+      console.log('Signup result:', success);
+
       if (success) {
+        console.log('Signup successful, showing modal...');
         sessionStorage.setItem('signupEmail', formData.email);
-        
+
         setFormData({ ...initialFormState });
         setShowPassword(false);
         setShowConfirmPassword(false);
         setFormKey(prev => prev + 1);
-        
+
         setShowSuccessModal(true);
+        console.log('Modal state set to true');
       } else {
+        console.log('Signup failed');
         setError('Email ID already exists, use different email');
       }
     } catch (err) {
@@ -362,7 +370,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
               <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="h-8 w-8 text-white" />
               </div>
-              
+
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Congratulations!</h3>
               <p className="text-lg text-gray-700 mb-6">
                 Your account has been created successfully. Welcome to ECR Beach Resorts Family!
