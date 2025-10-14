@@ -41,6 +41,19 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
     setShowPassword(false);
     setShowConfirmPassword(false);
     setFormKey(prev => prev + 1);
+
+    // Aggressively clear autofill after render
+    const timer = setTimeout(() => {
+      const inputs = document.querySelectorAll('input[name^="signup-"]');
+      inputs.forEach((input: any) => {
+        if (input) {
+          input.value = '';
+        }
+      });
+      setFormData({ ...initialFormState });
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
