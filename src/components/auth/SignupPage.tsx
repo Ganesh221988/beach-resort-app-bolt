@@ -30,6 +30,20 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
   const [error, setError] = useState('');
   const [checkingEmail, setCheckingEmail] = useState(false);
 
+  // Clear form on component mount
+  React.useEffect(() => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      role: 'customer',
+      agreeToTerms: false
+    });
+    setError('');
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -187,6 +201,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Enter your full name"
+                  autoComplete="off"
                   required
                 />
               </div>
@@ -208,6 +223,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Enter your email"
+                  autoComplete="off"
                   required
                 />
               </div>
@@ -229,6 +245,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="+91 98765 43210"
+                  autoComplete="off"
                   required
                 />
               </div>
@@ -250,6 +267,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Create a password"
+                  autoComplete="new-password"
                   required
                 />
                 <button
@@ -282,6 +300,7 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
                   onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   placeholder="Confirm your password"
+                  autoComplete="new-password"
                   required
                 />
                 <button
