@@ -63,13 +63,23 @@ export default function SignupPage({ onSignup, onBackToLanding, onSwitchToLogin,
         password: formData.password,
         role: formData.role
       });
-      
+
       if (success) {
-        // Store signup data for auto-fill on login page
-        sessionStorage.setItem('signupData', JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }));
+        // Store email for auto-fill on login page
+        sessionStorage.setItem('signupEmail', formData.email);
+
+        // Clear form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          password: '',
+          confirmPassword: '',
+          role: 'customer',
+          agreeToTerms: false
+        });
+
+        // Show success modal
         setShowSuccessModal(true);
       } else {
         setError('Email ID already exists, use different email');

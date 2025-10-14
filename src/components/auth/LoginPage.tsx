@@ -18,13 +18,12 @@ export function LoginPage({ onBackToLanding, onSwitchToSignup }: LoginPageProps)
   const [resetMessage, setResetMessage] = useState('');
   const { login, isLoading, sendPasswordReset } = useAuth();
 
-  // Check for stored signup data and auto-fill email
+  // Check for stored signup email and auto-fill
   React.useEffect(() => {
-    const signupData = sessionStorage.getItem('signupData');
-    if (signupData) {
-      const parsed = JSON.parse(signupData);
-      setEmail(parsed.email);
-      setPassword(parsed.password);
+    const signupEmail = sessionStorage.getItem('signupEmail');
+    if (signupEmail) {
+      setEmail(signupEmail);
+      sessionStorage.removeItem('signupEmail');
     }
   }, []);
   const handleSubmit = async (e: React.FormEvent) => {

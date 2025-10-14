@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService, AuthUser } from '../services/authService';
+import { supabase } from '../lib/supabase';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -21,7 +22,43 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check for existing session on mount
+  useEffect(() => {
+    checkSession();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      (async () => {
+        if (session?.user) {
+          const result = await authService.getCurrentUser();
+          if (result.success && result.user) {
+            setUser(result.user);
+          }
+        } else {
+          setUser(null);
+        }
+      })();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const checkSession = async () => {
+    try {
+      const result = await authService.getCurrentUser();
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+    } catch (error) {
+      console.error('Session check error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const switchRole = (role: 'admin' | 'owner' | 'broker' | 'customer') => {
     if (user) {
@@ -86,8 +123,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      await authService.signout();
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
